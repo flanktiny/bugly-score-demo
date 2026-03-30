@@ -37,7 +37,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang 
 .sec-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);}
 
 /* ─ Score Hero ─ */
-.hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;display:grid;grid-template-columns:200px 1fr auto;gap:28px;align-items:center;}
+.hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center;}
 
 /* 圆形仪表盘 */
 .gauge-wrap{position:relative;width:180px;height:180px;flex-shrink:0;}
@@ -243,23 +243,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     <div class="hero-desc" id="hDesc">—</div>
     <div class="chips" id="hChips"></div>
   </div>
-  <div class="hero-meta">
-    <div class="mc cr">
-      <div class="mc-lbl">设备崩溃率</div>
-      <div class="mc-val" id="mCr" style="color:#f85149">—</div>
-      <div class="mc-chg" id="mCrC">—</div>
-    </div>
-    <div class="mc an">
-      <div class="mc-lbl">ANR 率</div>
-      <div class="mc-val" id="mAn" style="color:#e3b341">—</div>
-      <div class="mc-chg" id="mAnC">—</div>
-    </div>
-    <div class="mc dv">
-      <div class="mc-lbl">联网设备</div>
-      <div class="mc-val" id="mDv" style="color:#58a6ff">—</div>
-      <div class="mc-chg" id="mDvC">—</div>
-    </div>
-  </div>
 </div>
 
 <!-- ===== 修复项（重点） ===== -->
@@ -271,7 +254,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 <div class="row3" id="dimGrid"></div>
 
 <!-- 指标健康度 + 趋势 -->
-<div class="sec"><span class="sec-dot"></span>指标健康度 & 趋势</div>
+<div class="sec"><span class="sec-dot"></span>指标健康度 & 趋势（近7天）</div>
 <div class="row2" style="margin-bottom:20px;">
   <div class="health-card">
     <h4>关键指标</h4>
@@ -337,10 +320,14 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 // ═══ 数据 ═══
 const D = {
   crashRate:0.312, crashRatePrev:0.278,
+  crashRateByCount:1.953, crashRateByCountPrev:0.195,
   anrRate:0.187,   anrRatePrev:0.201,
   foomRate:0.042,  foomRatePrev:0.038,
   jankRate:1.87,   jankRatePrev:2.14,
   devices:2373000, devicesPrev:2318000,
+  crashCount:72743,  crashCountPrev:90950,
+  affectedDevices:18420, affectedDevicesPrev:15200,
+  launchCount:23510000, launchCountPrev:24100000,
   trend:{
     crash:[0.41,0.38,0.35,0.44,0.29,0.31,0.31],
     anr:  [0.24,0.22,0.20,0.28,0.18,0.19,0.19],
@@ -544,7 +531,18 @@ function renderHero(){
     "较差":"质量较差，多项指标超出行业基准，建议立即启动质量专项治理。"
   };
   document.getElementById("hTitle").textContent=`质量评级：${lv.t}（${SC.total} 分）`;
-  document.getElementById("hDesc").textContent=descMap[lv.t];
+
+  // 详细分析描述
+  const critList=SC.list.filter(x=>x.total>=8&&x.st==="open");
+  const coreOpen=SC.list.filter(x=>x.core&&x.st==="open");
+  const oomOpen=[...ISSUES.oom].filter(x=>x.st!=="done");
+  let descLines=[];
+  // 问题原因
+  descLines.push(`当前崩溃率 ${D.crashRate.toFixed(3)}% 超出行业良好基准（0.2%），7天次数崩溃率峰值 ${D.crashRateByCount.toFixed(3)}%，较上周上升 ${(((D.crashRateByCount-D.crashRateByCountPrev)/D.crashRateByCountPrev)*100).toFixed(0)}%。`);
+  if(critList.length) descLines.push(`根因：${critList.length} 个高危问题（${critList.map(x=>x.id.slice(0,8)).join("、")}）持续未处理，合计影响 ${fmtDv(critList.reduce((s,x)=>s+x.dv,0))} 台设备，其中 ${coreOpen.filter(x=>x.total>=8).length} 个命中支付/首页核心路径。`);
+  if(oomOpen.length) descLines.push(`OOM 监控未开启，${oomOpen.length} 个内存问题（影响 ${fmtDv(oomOpen.reduce((s,x)=>s+x.dv,0))} 台）无法精准归因，建议尽快开启以获取完整堆栈。`);
+  descLines.push(`分析思路：① 优先修复 SIGSEGV libvbhook.so（影响最大，1.79w台）→ ② 处理支付/登录核心路径 NPE → ③ 解决主线程 ANR（7433台）→ ④ 开启 OOM 监控 + 配置突增告警。`);
+  document.getElementById("hDesc").innerHTML=descLines.map((l,i)=>`<div style="margin-bottom:${i<descLines.length-1?"6px":"0"}">${l}</div>`).join("");
 
   const chips=[];
   if(D.stability.cr>0.3) chips.push(`<span class="chip chip-y">⚠️ 崩溃率偏高</span>`);
@@ -683,22 +681,30 @@ function renderDims(){
 // ═══ 健康度 ═══
 function renderHealth(){
   const rows=[
-    {l:"设备崩溃率",v:D.crashRate,good:.1,bad:1,unit:"%",inv:true},
-    {l:"ANR 率",    v:D.anrRate,  good:.05,bad:.4,unit:"%",inv:true},
-    {l:"FOOM 率",   v:D.foomRate, good:.02,bad:.2,unit:"%",inv:true},
-    {l:"Top10响应率",v:D.ops.top10/10,good:1,bad:.4,pct:true,inv:false},
-    {l:"日志关联率",v:D.ops.logRatio,good:.6,bad:.2,pct:true,inv:false},
-    {l:"功能开启度",v:Object.values(D.ops.feat).filter(Boolean).length/Object.values(D.ops.feat).length,good:1,bad:.5,pct:true,inv:false},
+    {l:"设备崩溃率",    v:D.crashRate,            good:.1,   bad:1,    unit:"%",   inv:true,  note:"行业基准 ≤0.2%"},
+    {l:"次数崩溃率",    v:D.crashRateByCount,     good:.2,   bad:2,    unit:"%",   inv:true,  note:"较上周 +"+(((D.crashRateByCount-D.crashRateByCountPrev)/D.crashRateByCountPrev)*100).toFixed(0)+"%"},
+    {l:"ANR 率",       v:D.anrRate,              good:.05,  bad:.4,   unit:"%",   inv:true,  note:"行业基准 ≤0.1%"},
+    {l:"FOOM 率",      v:D.foomRate,             good:.02,  bad:.2,   unit:"%",   inv:true,  note:""},
+    {l:"发生次数",      v:D.crashCount,           good:0,    bad:150000,unit:"次", inv:true,  note:(D.crashCount/10000).toFixed(1)+"w次，↓"+(((D.crashCountPrev-D.crashCount)/D.crashCountPrev)*100).toFixed(0)+"%"},
+    {l:"影响设备数",    v:D.affectedDevices,      good:0,    bad:50000, unit:"台", inv:true,  note:fmtDv(D.affectedDevices)+"台，↑"+(((D.affectedDevices-D.affectedDevicesPrev)/D.affectedDevicesPrev)*100).toFixed(0)+"%"},
+    {l:"启动次数",      v:D.launchCount,          good:25000000,bad:10000000,unit:"次",inv:false,note:(D.launchCount/10000).toFixed(0)+"w次"},
+    {l:"联网设备数",    v:D.devices,              good:3000000,bad:1000000,unit:"台",inv:false, note:(D.devices/10000).toFixed(1)+"w台"},
+    {l:"Top10响应率",  v:D.ops.top10/10,         good:1,    bad:.4,   pct:true,   inv:false, note:""},
+    {l:"日志关联率",   v:D.ops.logRatio,          good:.6,   bad:.2,   pct:true,   inv:false, note:""},
   ];
   document.getElementById("healthRows").innerHTML=rows.map(g=>{
     const h=g.inv?Math.max(0,Math.min(1,1-(g.v-g.good)/(g.bad-g.good))):Math.max(0,Math.min(1,(g.v-g.bad)/(g.good-g.bad)));
     const c=h>=.7?"#3fb950":h>=.4?"#d29922":"#f85149";
-    const vs=g.pct?(g.v*100).toFixed(0)+"%":g.v.toFixed(3)+(g.unit||"");
+    let vs;
+    if(g.pct) vs=(g.v*100).toFixed(0)+"%";
+    else if(g.unit==="次"||g.unit==="台") vs=g.note||fmtDv(g.v)+g.unit;
+    else vs=g.v.toFixed(3)+(g.unit||"");
     const ic=h>=.7?"✓":h>=.4?"!":"✕";
+    const noteHtml=g.note&&g.unit!=="次"&&g.unit!=="台"?`<span style="font-size:10px;color:var(--text3);margin-left:4px;">${g.note}</span>`:"";
     return `<div class="h-row">
       <div class="h-lbl">${g.l}</div>
       <div class="h-bar"><div class="h-fill" style="width:${(h*100).toFixed(0)}%;background:${c};"></div></div>
-      <div class="h-val" style="color:${c}">${vs}</div>
+      <div class="h-val" style="color:${c};font-size:11px;width:auto;min-width:60px;">${vs}${noteHtml}</div>
       <div class="h-ic" style="background:${c}22;color:${c}">${ic}</div>
     </div>`;
   }).join("");
