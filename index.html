@@ -155,9 +155,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang 
 
 /* ─ Trend ─ */
 .trend-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;}
-.trend-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0;}
+.trend-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0;}
 .trend-hdr h4{font-size:13px;font-weight:600;}
-.trend-canvas-wrap{flex:1;position:relative;min-height:140px;}
+.trend-tabs{display:flex;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:6px;overflow:hidden;flex-shrink:0;}
+.trend-tab{font-size:11px;padding:4px 11px;color:var(--text2);cursor:pointer;transition:.12s;white-space:nowrap;border-right:1px solid var(--border);}
+.trend-tab:last-child{border-right:none;}
+.trend-tab:hover{color:var(--text);background:rgba(255,255,255,.03);}
+.trend-tab.act{color:#fff;font-weight:600;}
+.trend-canvas-wrap{flex:1;position:relative;min-height:140px;margin-top:10px;}
 .trend-legend{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text2);}
 .leg-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;}
 
@@ -279,8 +284,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   <div class="trend-card">
     <div class="trend-hdr">
       <h4>7 天趋势</h4>
-      <div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;">
-        <span style="width:7px;height:7px;border-radius:50%;background:#f85149;display:inline-block;"></span>崩溃率
+      <div class="trend-tabs" id="trendTabs">
+        <div class="trend-tab act" style="background:#f85149;" onclick="switchTrend(this,'crash')">💥 崩溃率</div>
+        <div class="trend-tab" onclick="switchTrend(this,'anr')">⏳ ANR率</div>
+        <div class="trend-tab" onclick="switchTrend(this,'foom')">💾 FOOM率</div>
       </div>
     </div>
     <div class="trend-canvas-wrap">
@@ -317,14 +324,25 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <!-- 舆情 -->
 <div class="sec"><span class="sec-dot"></span>质量舆情</div>
-<div class="row2" style="margin-bottom:20px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+  <!-- 左：商店评分 + 趋势 -->
   <div class="sent-card">
-    <div class="sent-hdr">应用商店评分</div>
+    <div class="sent-hdr" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>应用商店评分</span>
+      <span style="font-size:11px;color:var(--text3);font-weight:400;">近7天</span>
+    </div>
     <div class="sent-body" id="sentStores"></div>
   </div>
-  <div class="sent-card">
-    <div class="sent-hdr">用户反馈热词</div>
-    <div class="sent-body" id="sentWords" style="padding:14px 16px;"></div>
+  <!-- 右：热词 + 舆情详情 -->
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="sent-card">
+      <div class="sent-hdr">用户反馈热词</div>
+      <div class="sent-body" id="sentWords"></div>
+    </div>
+    <div class="sent-card">
+      <div class="sent-hdr">近期差评摘要</div>
+      <div class="sent-body" id="sentReviews"></div>
+    </div>
   </div>
 </div>
 
@@ -354,9 +372,9 @@ const D = {
     feat:{symbol:true,anr:true,oom:false,log:true,alert:false,ver:true}},
   sentiment:{
     stores:[
-      {name:"App Store",rating:3.2,cnt:128,sample:"启动有时会卡住，偶尔闪退"},
-      {name:"应用宝",   rating:3.5,cnt:76, sample:"最近版本更新后崩溃变多了"},
-      {name:"华为商店", rating:3.8,cnt:54, sample:"整体还行，视频播放偶有卡顿"},
+      {name:"App Store",rating:3.2,cnt:128,chg:+0.2,url:"https://apps.apple.com",   sample:"启动有时会卡住，偶尔闪退"},
+      {name:"应用宝",   rating:3.5,cnt:76, chg:-0.1,url:"https://sj.qq.com",        sample:"最近版本更新后崩溃变多了"},
+      {name:"华为商店", rating:3.8,cnt:54, chg:0,   url:"https://appgallery.huawei.com",sample:"整体还行，视频播放偶有卡顿"},
     ],
     words:[
       {w:"闪退",cnt:312,neg:true},{w:"崩溃",cnt:287,neg:true},
@@ -747,7 +765,6 @@ function renderHealth(){
         <span class="mc2-ref">${m.ref}</span>
         ${chgHtml}
       </div>
-      <div class="mc2-bar" style="background:${c};width:${(health*100).toFixed(0)}%;opacity:.5;"></div>
     </div>`;
   }).join("");
 }
@@ -755,8 +772,13 @@ function renderHealth(){
 // ═══ 趋势 ═══
 let curTrend="crash";
 function switchTrend(el,k){
-  document.querySelectorAll(".trend-tab").forEach(t=>t.classList.remove("act"));
+  const colors={crash:"#f85149",anr:"#d29922",foom:"#bc8cff"};
+  document.querySelectorAll(".trend-tab").forEach(t=>{
+    t.classList.remove("act");
+    t.style.background="";
+  });
   el.classList.add("act");
+  el.style.background=colors[k]||"#58a6ff";
   curTrend=k; drawTrend(k);
 }
 
@@ -874,33 +896,116 @@ function initTabs(){
 // ═══ 舆情 ═══
 function renderSentiment(){
   const stores=D.sentiment.stores;
-  document.getElementById("sentStores").innerHTML=stores.map(s=>{
-    const rc=s.rating>=4?"#3fb950":s.rating>=3?"#d29922":"#f85149";
-    return `<div class="sent-store">
-      <div>
-        <div class="sent-plat">${s.name}</div>
-        <div class="sent-sample">「${s.sample}」</div>
-      </div>
-      <div class="sent-right">
-        <div class="sent-rt" style="color:${rc}">${s.rating} ⭐</div>
-        <div class="sent-cnt">${s.cnt}条</div>
-      </div>
-    </div>`;
-  }).join("");
 
+  // 商店评分 + 评分趋势迷你图
+  document.getElementById("sentStores").innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0 14px;border-bottom:1px solid rgba(48,54,61,.4);">
+      <div style="text-align:center;flex-shrink:0;">
+        <div style="font-size:36px;font-weight:800;color:#d29922;line-height:1;">3.5</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">综合评分</div>
+        <div style="color:#d29922;font-size:14px;margin-top:2px;">★★★½☆</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--text3);width:28px;">5星</span>
+          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:15%;height:100%;background:#3fb950;border-radius:3px;"></div></div>
+          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">15%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--text3);width:28px;">4星</span>
+          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:20%;height:100%;background:#58a6ff;border-radius:3px;"></div></div>
+          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">20%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--text3);width:28px;">3星</span>
+          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:30%;height:100%;background:#d29922;border-radius:3px;"></div></div>
+          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">30%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--text3);width:28px;">2星</span>
+          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:20%;height:100%;background:#f85149;border-radius:3px;"></div></div>
+          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">20%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="font-size:11px;color:var(--text3);width:28px;">1星</span>
+          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:15%;height:100%;background:#f85149;border-radius:3px;opacity:.7;"></div></div>
+          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">15%</span>
+        </div>
+      </div>
+    </div>
+    ${stores.map(s=>{
+      const rc=s.rating>=4?"#3fb950":s.rating>=3?"#d29922":"#f85149";
+      const chg=s.chg||0;
+      const chgHtml=chg!==0?`<span style="font-size:10px;color:${chg>0?"#f85149":"#3fb950"};margin-left:4px;">${chg>0?"↑":"↓"}${Math.abs(chg).toFixed(1)}</span>`:"";
+      return `<div class="sent-store">
+        <div>
+          <div class="sent-plat" style="display:flex;align-items:center;gap:6px;">
+            ${s.name}
+            <a href="${s.url||"#"}" target="_blank" style="font-size:10px;color:var(--blue);text-decoration:none;opacity:.7;" title="查看详情">↗</a>
+          </div>
+          <div class="sent-sample" style="color:var(--text3);">「${s.sample}」</div>
+        </div>
+        <div class="sent-right">
+          <div style="text-align:right;">
+            <div class="sent-rt" style="color:${rc}">${s.rating} ⭐${chgHtml}</div>
+            <div class="sent-cnt">${s.cnt}条评价</div>
+          </div>
+        </div>
+      </div>`;
+    }).join("")}
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(48,54,61,.4);display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:11px;color:var(--text3);">评分较上月 <span style="color:#f85149;">↓0.3</span>，差评主因：崩溃 & 卡顿</span>
+      <a href="#" style="font-size:11px;color:var(--blue);text-decoration:none;">查看全部评论 →</a>
+    </div>`;
+
+  // 热词
   const words=D.sentiment.words;
   document.getElementById("sentWords").innerHTML=`
-    <div style="display:flex;flex-wrap:wrap;gap:6px;">
-      ${words.map(w=>`
-        <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 10px;border-radius:20px;
-          background:${w.neg?"rgba(248,81,73,.08)":"rgba(63,185,80,.08)"};
-          color:${w.neg?"#f85149":"#3fb950"};
-          border:1px solid ${w.neg?"rgba(248,81,73,.2)":"rgba(63,185,80,.2)"};">
-          ${w.w}<span style="font-size:10px;opacity:.7">${w.cnt}</span>
-        </span>`).join("")}
-    </div>
-    <div style="margin-top:14px;font-size:12px;color:var(--text3);line-height:1.6;">
-      综合舆情评分：<span style="font-weight:700;color:#d29922">6 / 10</span> · 用户反馈以稳定性问题为主，建议优先修复崩溃和卡顿
+    <div style="padding:12px 14px;">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+        ${words.map(w=>`
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 10px;border-radius:20px;
+            background:${w.neg?"rgba(248,81,73,.08)":"rgba(63,185,80,.08)"};
+            color:${w.neg?"#f85149":"#3fb950"};
+            border:1px solid ${w.neg?"rgba(248,81,73,.2)":"rgba(63,185,80,.2)"};">
+            ${w.w}<span style="font-size:10px;opacity:.7;">${w.cnt}</span>
+          </span>`).join("")}
+      </div>
+      <div style="display:flex;gap:16px;font-size:11px;color:var(--text3);">
+        <span>😡 负面 ${words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)} 条</span>
+        <span>😊 正面 ${words.filter(w=>!w.neg).reduce((s,w)=>s+w.cnt,0)} 条</span>
+        <span>负面占比 <span style="color:#f85149;font-weight:600;">${(words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)/words.reduce((s,w)=>s+w.cnt,0)*100).toFixed(0)}%</span></span>
+      </div>
+    </div>`;
+
+  // 近期差评摘要
+  const reviews=[
+    {user:"匿名用户A",platform:"App Store",star:1,time:"3天前",content:"更新后一打开就闪退，已经连续出现3次了，严重影响使用，求修复！",tag:"崩溃",url:"#"},
+    {user:"手机用户B",platform:"应用宝",  star:2,time:"4天前",content:"购物车页面经常卡死，有时候直接黑屏，支付流程也出过问题，体验极差。",tag:"ANR",url:"#"},
+    {user:"买家C",    platform:"华为商店",star:2,time:"5天前",content:"视频播放卡顿非常严重，而且内存占用特别高，其他app打开后就莫名闪退。",tag:"OOM",url:"#"},
+    {user:"某用户",   platform:"App Store",star:1,time:"6天前",content:"登录之后白屏，强杀重进也没用，重装才恢复，这个bug已经反馈好几次了！",tag:"崩溃",url:"#"},
+  ];
+  const tagColor={"崩溃":"#f85149","ANR":"#d29922","OOM":"#bc8cff","卡顿":"#58a6ff"};
+  document.getElementById("sentReviews").innerHTML=`
+    <div style="padding:0;">
+      ${reviews.map((r,i)=>`
+        <div style="padding:10px 14px;${i<reviews.length-1?"border-bottom:1px solid rgba(48,54,61,.3);":""}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:11px;font-weight:600;color:var(--text2);">${r.user}</span>
+              <span style="font-size:10px;color:var(--text3);">${r.platform} · ${r.time}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;background:${tagColor[r.tag]||"#8b949e"}22;color:${tagColor[r.tag]||"#8b949e"};border:1px solid ${tagColor[r.tag]||"#8b949e"}33;">${r.tag}</span>
+              <span style="font-size:12px;color:#f85149;">${"★".repeat(r.star)}${"☆".repeat(5-r.star)}</span>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;">${r.content}</div>
+        </div>`).join("")}
+      <div style="padding:8px 14px;border-top:1px solid rgba(48,54,61,.3);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:11px;color:var(--text3);">共 258 条差评 · 本周新增 47 条</span>
+        <a href="#" style="font-size:11px;color:var(--blue);text-decoration:none;">查看全部 →</a>
+      </div>
     </div>`;
 }
 
