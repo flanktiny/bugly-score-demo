@@ -285,9 +285,9 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     <div class="trend-hdr">
       <h4>7 天趋势</h4>
       <div class="trend-tabs" id="trendTabs">
-        <div class="trend-tab act" style="background:#f85149;" onclick="switchTrend(this,'crash')">💥 崩溃率</div>
-        <div class="trend-tab" onclick="switchTrend(this,'anr')">⏳ ANR率</div>
-        <div class="trend-tab" onclick="switchTrend(this,'foom')">💾 FOOM率</div>
+        <div class="trend-tab act" style="background:#f85149;" onclick="switchTrend(this,'crash')">崩溃率</div>
+        <div class="trend-tab" onclick="switchTrend(this,'anr')">ANR率</div>
+        <div class="trend-tab" onclick="switchTrend(this,'foom')">FOOM率</div>
       </div>
     </div>
     <div class="trend-canvas-wrap">
@@ -305,10 +305,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       <span class="pill" id="iCntBdg">共 — 条</span>
     </div>
     <div class="itabs" id="itabs">
-      <div class="itab act" data-t="crash" onclick="switchTab(this,'crash')">💥 崩溃 <span class="tc" id="tc-crash">—</span></div>
-      <div class="itab" data-t="anr" onclick="switchTab(this,'anr')">⏳ ANR <span class="tc" id="tc-anr">—</span></div>
-      <div class="itab" data-t="oom" onclick="switchTab(this,'oom')">💾 OOM/FOOM <span class="tc" id="tc-oom">—</span></div>
-      <div class="itab" data-t="jank" onclick="switchTab(this,'jank')">🐢 卡顿 <span class="tc" id="tc-jank">—</span></div>
+      <div class="itab act" data-t="crash" onclick="switchTab(this,'crash')">崩溃 <span class="tc" id="tc-crash">—</span></div>
+      <div class="itab" data-t="anr" onclick="switchTab(this,'anr')">ANR <span class="tc" id="tc-anr">—</span></div>
+      <div class="itab" data-t="oom" onclick="switchTab(this,'oom')">OOM/FOOM <span class="tc" id="tc-oom">—</span></div>
+      <div class="itab" data-t="jank" onclick="switchTab(this,'jank')">卡顿 <span class="tc" id="tc-jank">—</span></div>
     </div>
   </div>
   <div class="tbl-wrap">
@@ -707,34 +707,22 @@ function renderDims(){
 // ═══ 健康度（指标卡片网格） ═══
 function renderHealth(){
   const metrics=[
-    {l:"设备崩溃率",    v:D.crashRate,        unit:"%",   fmt:v=>v.toFixed(3)+"%",
+    {l:"设备崩溃率",   v:D.crashRate,        fmt:v=>v.toFixed(3)+"%",
      chg:((D.crashRate-D.crashRatePrev)/D.crashRatePrev*100), chgInv:true,
-     ref:"基准≤0.2%", good:.1, bad:1, inv:true, ic:"💥"},
-    {l:"次数崩溃率",    v:D.crashRateByCount, unit:"%",   fmt:v=>v.toFixed(3)+"%",
+     ref:"基准≤0.2%", good:.1, bad:1, inv:true},
+    {l:"次数崩溃率",   v:D.crashRateByCount, fmt:v=>v.toFixed(3)+"%",
      chg:((D.crashRateByCount-D.crashRateByCountPrev)/D.crashRateByCountPrev*100), chgInv:true,
-     ref:"较上周", good:.2, bad:2, inv:true, ic:"📊"},
-    {l:"ANR 率",       v:D.anrRate,          unit:"%",   fmt:v=>v.toFixed(3)+"%",
+     ref:"较上周", good:.2, bad:2, inv:true},
+    {l:"ANR 率",      v:D.anrRate,          fmt:v=>v.toFixed(3)+"%",
      chg:((D.anrRate-D.anrRatePrev)/D.anrRatePrev*100), chgInv:true,
-     ref:"基准≤0.1%", good:.05, bad:.4, inv:true, ic:"⏳"},
-    {l:"FOOM 率",      v:D.foomRate,         unit:"%",   fmt:v=>v.toFixed(3)+"%",
+     ref:"基准≤0.1%", good:.05, bad:.4, inv:true},
+    {l:"FOOM 率",     v:D.foomRate,         fmt:v=>v.toFixed(3)+"%",
      chg:((D.foomRate-D.foomRatePrev)/D.foomRatePrev*100), chgInv:true,
-     ref:"较上周", good:.02, bad:.2, inv:true, ic:"💾"},
-    {l:"发生次数",      v:D.crashCount,       unit:"次",  fmt:v=>(v/10000).toFixed(1)+"w次",
-     chg:((D.crashCount-D.crashCountPrev)/D.crashCountPrev*100), chgInv:true,
-     ref:"较上周", good:0, bad:150000, inv:true, ic:"🔢"},
-    {l:"影响设备数",    v:D.affectedDevices,  unit:"台",  fmt:v=>fmtDv(v)+"台",
-     chg:((D.affectedDevices-D.affectedDevicesPrev)/D.affectedDevicesPrev*100), chgInv:true,
-     ref:"较上周", good:0, bad:50000, inv:true, ic:"📱"},
-    {l:"启动次数",      v:D.launchCount,      unit:"次",  fmt:v=>(v/10000).toFixed(0)+"w次",
-     chg:((D.launchCount-D.launchCountPrev)/D.launchCountPrev*100), chgInv:false,
-     ref:"较上周", good:25000000, bad:10000000, inv:false, ic:"🚀"},
-    {l:"联网设备数",    v:D.devices,          unit:"台",  fmt:v=>(v/10000).toFixed(1)+"w台",
-     chg:((D.devices-D.devicesPrev)/D.devicesPrev*100), chgInv:false,
-     ref:"较上周", good:3000000, bad:1000000, inv:false, ic:"📡"},
-    {l:"Top10 响应率",  v:D.ops.top10/10,     unit:"%",   fmt:v=>(v*100).toFixed(0)+"%",
-     chg:null, ref:"当前 "+D.ops.top10+"/10", good:1, bad:.4, inv:false, ic:"✅"},
-    {l:"日志关联率",   v:D.ops.logRatio,      unit:"%",   fmt:v=>(v*100).toFixed(0)+"%",
-     chg:null, ref:"目标≥60%", good:.6, bad:.2, inv:false, ic:"📋"},
+     ref:"较上周", good:.02, bad:.2, inv:true},
+    {l:"Top10 响应率", v:D.ops.top10/10,    fmt:v=>(v*100).toFixed(0)+"%",
+     chg:null, ref:"当前 "+D.ops.top10+"/10", good:1, bad:.4, inv:false},
+    {l:"日志关联率",   v:D.ops.logRatio,     fmt:v=>(v*100).toFixed(0)+"%",
+     chg:null, ref:"目标≥60%", good:.6, bad:.2, inv:false},
   ];
 
   document.getElementById("healthRows").innerHTML=metrics.map(m=>{
@@ -758,7 +746,7 @@ function renderHealth(){
     return `<div class="mc2" style="background:${bgC};border-color:${c}22;">
       <div class="mc2-top">
         <div class="mc2-lbl">${m.l}</div>
-        <div class="mc2-ic" style="background:${icBg};color:${c}">${m.ic}</div>
+        <div style="width:7px;height:7px;border-radius:50%;background:${c};flex-shrink:0;margin-top:2px;box-shadow:0 0 5px ${c}88;"></div>
       </div>
       <div class="mc2-val" style="color:${c}">${m.fmt(m.v)}</div>
       <div class="mc2-foot">
