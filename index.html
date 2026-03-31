@@ -146,7 +146,7 @@ body{
 }
 
 /* 仪表盘 */
-.gauge-wrap{ position:relative; width:190px; height:190px; flex-shrink:0; background:#141d2e; border-radius:50%; }
+.gauge-wrap{ position:relative; width:190px; height:190px; flex-shrink:0; }
 #gaugeCanvas{ display:block; }
 .gauge-center{
   position:absolute; top:50%; left:50%;
@@ -670,20 +670,16 @@ function drawGauge(val){
   const ctx=cv.getContext("2d"); ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,190,190);
 
-  /* 用卡片背景色填充整个 canvas，消除透明割裂 */
-  ctx.fillStyle="#141d2e";
-  ctx.fillRect(0,0,190,190);
-
   const cx=95,cy=100,R=76,sw=11;
   const start=Math.PI*.75,end=Math.PI*2.25,arc=end-start;
 
   /* 外发光环（非常淡，仅增加层次） */
   ctx.beginPath(); ctx.arc(cx,cy,R+14,start,end);
-  ctx.strokeStyle="rgba(59,130,246,.03)"; ctx.lineWidth=26; ctx.lineCap="round"; ctx.stroke();
+  ctx.strokeStyle="rgba(59,130,246,.04)"; ctx.lineWidth=26; ctx.lineCap="round"; ctx.stroke();
 
-  /* 背景轨道 — 颜色和线帽统一 */
+  /* 背景轨道 — 方头对齐弧线边界，防止圆头突出到缺口透明区 */
   ctx.beginPath(); ctx.arc(cx,cy,R,start,end);
-  ctx.strokeStyle="rgba(255,255,255,.07)"; ctx.lineWidth=sw; ctx.lineCap="round"; ctx.stroke();
+  ctx.strokeStyle="rgba(255,255,255,.08)"; ctx.lineWidth=sw; ctx.lineCap="butt"; ctx.stroke();
 
   /* 当前值弧 */
   const pct=Math.min(val/100,1);
