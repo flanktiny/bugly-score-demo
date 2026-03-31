@@ -670,12 +670,12 @@ function drawGauge(val){
   const ctx=cv.getContext("2d"); ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,190,190);
 
-  const cx=95,cy=100,R=76,sw=11;
+  const cx=95,cy=95,R=72,sw=11;
   const start=Math.PI*.75,end=Math.PI*2.25,arc=end-start;
 
-  /* 外发光环（非常淡，仅增加层次） */
-  ctx.beginPath(); ctx.arc(cx,cy,R+14,start,end);
-  ctx.strokeStyle="rgba(59,130,246,.04)"; ctx.lineWidth=26; ctx.lineCap="round"; ctx.stroke();
+  /* 外发光环（控制尺寸：R+10+lineWidth/2 必须 < cx=95，即 ≤94） */
+  ctx.beginPath(); ctx.arc(cx,cy,R+10,start,end);
+  ctx.strokeStyle="rgba(59,130,246,.05)"; ctx.lineWidth=18; ctx.lineCap="butt"; ctx.stroke();
 
   /* 背景轨道 — 方头对齐弧线边界，防止圆头突出到缺口透明区 */
   ctx.beginPath(); ctx.arc(cx,cy,R,start,end);
