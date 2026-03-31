@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.2.0 -->
+<!-- v2.0.0 tech-light -->
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -7,231 +7,366 @@
 <title>Bugly 智能质量评分 · Demo</title>
 <style>
 :root{
-  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f6f8fa;--bg4:#eaecef;
-  --border:#e1e4e8;--border2:#d0d7de;
-  --text:#1a1f2e;--text2:#57606a;--text3:#8c96a3;
-  --blue:#0969da;--red:#cf222e;--orange:#9a6700;
-  --green:#1a7f37;--purple:#6639ba;--teal:#1b7c5d;
-  --r:12px;--rs:8px;
-  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
-  --shadow-sm:0 1px 2px rgba(0,0,0,.06);
+  /* 主色调：科技蓝体系 */
+  --primary:#1565c0;
+  --primary-light:#1976d2;
+  --primary-soft:rgba(21,101,192,.08);
+  --primary-border:rgba(21,101,192,.18);
+
+  /* 背景层次 */
+  --bg:#f4f6fb;
+  --bg2:#ffffff;
+  --bg3:#f0f4fa;
+  --bg4:#e8edf5;
+  --bg-card:#ffffff;
+
+  /* 边框 */
+  --border:#dde3ee;
+  --border2:#c8d0e0;
+
+  /* 文字 */
+  --text:#1a2236;
+  --text2:#4a5568;
+  --text3:#8899b0;
+
+  /* 语义色（针对浅色背景优化） */
+  --red:#d32f2f;
+  --red-bg:rgba(211,47,47,.07);
+  --red-border:rgba(211,47,47,.2);
+
+  --orange:#e65100;
+  --orange-bg:rgba(230,81,0,.07);
+  --orange-border:rgba(230,81,0,.18);
+
+  --green:#2e7d32;
+  --green-bg:rgba(46,125,50,.07);
+  --green-border:rgba(46,125,50,.2);
+
+  --blue:#1565c0;
+  --blue-bg:rgba(21,101,192,.07);
+  --blue-border:rgba(21,101,192,.18);
+
+  --purple:#6a1b9a;
+  --purple-bg:rgba(106,27,154,.07);
+  --purple-border:rgba(106,27,154,.18);
+
+  --teal:#00695c;
+  --teal-bg:rgba(0,105,92,.07);
+
+  /* 圆角 & 阴影 */
+  --r:12px;
+  --rs:8px;
+  --shadow:0 1px 4px rgba(30,60,120,.06),0 6px 20px rgba(30,60,120,.07);
+  --shadow-sm:0 1px 3px rgba(30,60,120,.06);
+  --shadow-lg:0 4px 24px rgba(30,60,120,.12);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;}
 
-/* Header */
-.hdr{height:54px;background:rgba(255,255,255,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:12px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);box-shadow:var(--shadow-sm);}
-.hdr-logo{width:32px;height:32px;background:linear-gradient(135deg,#0550ae,#0969da);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;}
-.hdr-title{font-size:16px;font-weight:600;}
+/* ─ Header ─ */
+.hdr{
+  height:56px;
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;gap:14px;
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 var(--border),0 2px 12px rgba(30,60,120,.05);
+}
+.hdr-logo{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,#1565c0 0%,#42a5f5 100%);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;color:#fff;font-size:16px;
+  box-shadow:0 2px 8px rgba(21,101,192,.35);
+  letter-spacing:-1px;
+}
+.hdr-title{font-size:15px;font-weight:700;color:var(--text);}
 .hdr-sep{width:1px;height:16px;background:var(--border);}
 .hdr-app{font-size:13px;color:var(--text2);}
 .hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.pill{font-size:12px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
-.btn{font-size:12px;color:var(--blue);background:rgba(9,105,218,.06);border:1px solid rgba(9,105,218,.25);padding:4px 12px;border-radius:20px;cursor:pointer;}
-.btn:hover{background:rgba(9,105,218,.1);}
+.pill{
+  font-size:12px;color:var(--text2);
+  background:var(--bg3);border:1px solid var(--border);
+  padding:4px 12px;border-radius:20px;
+}
+.btn{
+  font-size:12px;color:var(--primary);
+  background:var(--blue-bg);border:1px solid var(--blue-border);
+  padding:4px 12px;border-radius:20px;cursor:pointer;transition:.15s;
+}
+.btn:hover{background:rgba(21,101,192,.13);border-color:rgba(21,101,192,.3);}
 .ts{font-size:11px;color:var(--text3);}
 
-/* Container */
-.wrap{max-width:1280px;margin:0 auto;padding:20px 28px 40px;}
+/* ─ Container ─ */
+.wrap{max-width:1280px;margin:0 auto;padding:22px 28px 48px;}
 
-/* Section title */
-.sec{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-.sec-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);}
+/* ─ Section label ─ */
+.sec{
+  font-size:11px;font-weight:700;color:var(--text2);
+  letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.sec-dot{
+  width:16px;height:4px;border-radius:2px;
+  background:linear-gradient(90deg,var(--primary),#42a5f5);
+}
 
 /* ─ Score Hero ─ */
-.hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center;box-shadow:var(--shadow);}
+.hero{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:28px 32px;
+  margin-bottom:22px;
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:32px;
+  align-items:center;
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(21,101,192,.04) 0%,transparent 70%);
+  pointer-events:none;
+}
 
 /* 圆形仪表盘 */
 .gauge-wrap{position:relative;width:180px;height:180px;flex-shrink:0;}
 #gaugeCanvas{display:block;}
 .gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
-.gauge-num{font-size:44px;font-weight:800;line-height:1;letter-spacing:-2px;}
-.gauge-denom{font-size:13px;color:var(--text2);margin-top:1px;}
-.gauge-lv{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px;}
+.gauge-num{font-size:46px;font-weight:900;line-height:1;letter-spacing:-2px;}
+.gauge-denom{font-size:12px;color:var(--text3);margin-top:2px;}
+.gauge-lv{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin-top:6px;letter-spacing:.3px;}
 
-/* Summary */
-.hero-sum{}
-.hero-main{font-size:18px;font-weight:700;margin-bottom:8px;}
-.hero-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;}
-.chips{display:flex;flex-wrap:wrap;gap:5px;}
-.chip{font-size:12px;padding:3px 9px;border-radius:20px;font-weight:500;}
-.chip-r{background:rgba(207,34,46,.08);color:#cf222e;border:1px solid rgba(207,34,46,.2);}
-.chip-y{background:rgba(154,103,0,.08);color:#9a6700;border:1px solid rgba(154,103,0,.2);}
-.chip-g{background:rgba(26,127,55,.08);color:#1a7f37;border:1px solid rgba(26,127,55,.2);}
-.chip-b{background:rgba(9,105,218,.08);color:#0969da;border:1px solid rgba(9,105,218,.2);}
+/* Hero Right */
+.hero-main{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text);}
+.hero-desc{font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:14px;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500;display:inline-flex;align-items:center;gap:4px;}
+.chip-r{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.chip-y{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border);}
+.chip-g{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.chip-b{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border);}
 
-/* Meta */
-.hero-meta{display:flex;flex-direction:column;gap:8px;}
-.mc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;min-width:130px;position:relative;overflow:hidden;}
-.mc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;border-radius:1px;}
-.mc.cr::before{background:#cf222e;}.mc.an::before{background:#9a6700;}.mc.dv::before{background:#0969da;}
-.mc-lbl{font-size:11px;color:var(--text2);margin-bottom:3px;}
-.mc-val{font-size:20px;font-weight:700;line-height:1;}
-.mc-chg{font-size:11px;margin-top:3px;}
-.bdg{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:1px 5px;border-radius:3px;}
-.bdg-up{background:rgba(207,34,46,.08);color:#cf222e;}
-.bdg-dn{background:rgba(26,127,55,.08);color:#1a7f37;}
-.bdg-fl{background:rgba(100,116,139,.08);color:#8c96a3;}
-
-/* ─ 修复项（重点模块） ─ */
-.fix-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
-.fix-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+/* ─ 修复项 ─ */
+.fix-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  margin-bottom:22px;box-shadow:var(--shadow);
+}
+.fix-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .fix-header h3{font-size:14px;font-weight:600;}
 .fix-header .cnt{font-size:12px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:1px 8px;border-radius:20px;}
-/* 大类 */
 .fix-group{}
-.fix-group-hdr{padding:11px 18px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.fix-group-hdr{
+  padding:11px 20px;background:var(--bg3);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:background .12s;
+}
 .fix-group-hdr:hover{background:var(--bg4);}
-.fix-group-icon{font-size:15px;}
+.fix-group-icon{font-size:14px;}
 .fix-group-name{font-size:13px;font-weight:600;flex:1;}
 .fix-group-meta{display:flex;align-items:center;gap:8px;}
 .fix-group-cnt{font-size:11px;color:var(--text2);background:var(--bg4);padding:1px 7px;border-radius:10px;border:1px solid var(--border);}
-.fix-group-score{font-size:12px;font-weight:700;}
-.fix-group-arrow{font-size:11px;color:var(--text3);transition:.15s;}
+.fix-group-score{font-size:12px;color:var(--text3);}
+.fix-group-arrow{font-size:10px;color:var(--text3);transition:.15s;}
 .fix-group-arrow.open{transform:rotate(90deg);}
-/* 子项 */
 .fix-items{display:none;}
 .fix-items.open{display:block;}
-.fix-item{padding:10px 18px 10px 48px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;}
+.fix-item{padding:10px 20px 10px 52px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;transition:background .1s;}
 .fix-item:last-child{border-bottom:none;}
 .fix-item:hover{background:var(--bg3);}
-.fi-prio{font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;flex-shrink:0;margin-top:1px;}
-.pi-urg{background:rgba(207,34,46,.1);color:#cf222e;border:1px solid rgba(207,34,46,.25);}
-.pi-hi{background:rgba(154,103,0,.1);color:#9a6700;border:1px solid rgba(154,103,0,.25);}
-.pi-med{background:rgba(9,105,218,.08);color:#0969da;border:1px solid rgba(9,105,218,.2);}
+.fi-prio{font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;}
+.pi-urg{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.pi-hi{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border);}
+.pi-med{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border);}
 .fi-body{flex:1;min-width:0;}
-.fi-title{font-size:13px;font-weight:500;margin-bottom:2px;}
+.fi-title{font-size:13px;font-weight:500;margin-bottom:2px;color:var(--text);}
 .fi-desc{font-size:12px;color:var(--text2);line-height:1.5;}
-.fi-gain{font-size:12px;font-weight:700;color:#1a7f37;white-space:nowrap;flex-shrink:0;padding-top:1px;}
+.fi-gain{font-size:12px;font-weight:700;color:var(--green);white-space:nowrap;flex-shrink:0;padding-top:1px;}
 
-/* ─ Two cols ─ */
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
+/* ─ Grid layouts ─ */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:22px;}
 
-/* Dim cards */
-.dim{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);}
-.dim-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
-.dim-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
-.dim-score{font-size:28px;font-weight:800;line-height:1;}
+/* ─ Dim cards ─ */
+.dim{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 20px;
+  box-shadow:var(--shadow);
+  transition:box-shadow .15s,border-color .15s;
+}
+.dim:hover{box-shadow:var(--shadow-lg);border-color:var(--border2);}
+.dim-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.dim-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.dim-score{font-size:30px;font-weight:900;line-height:1;}
 .dim-denom{font-size:12px;color:var(--text3);}
-.dim-name{font-size:13px;font-weight:600;margin-bottom:1px;}
+.dim-name{font-size:13px;font-weight:700;margin-bottom:1px;color:var(--text);}
 .dim-sub{font-size:11px;color:var(--text3);}
-.dim-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:10px;}
-.dim-bar-f{height:100%;border-radius:2px;}
-.sub-rows{display:flex;flex-direction:column;gap:6px;}
+.dim-bar{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-bottom:12px;}
+.dim-bar-f{height:100%;border-radius:3px;transition:width .6s ease;}
+.sub-rows{display:flex;flex-direction:column;gap:7px;}
 .sub-row{display:flex;align-items:center;gap:6px;font-size:12px;}
 .sub-nm{color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sub-bw{width:52px;height:3px;background:var(--bg4);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.sub-bw{width:54px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;flex-shrink:0;}
 .sub-bf{height:100%;border-radius:2px;}
-.sub-pt{font-size:12px;font-weight:700;min-width:30px;text-align:right;}
-.dim-pending{margin-top:8px;font-size:11px;color:var(--teal);padding:6px 8px;background:rgba(27,124,93,.06);border:1px dashed rgba(27,124,93,.2);border-radius:6px;text-align:center;}
+.sub-pt{font-size:12px;font-weight:700;min-width:32px;text-align:right;}
 
-/* ─ Health gauges ─ */
-.health-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);}
-.health-card h4{font-size:13px;font-weight:600;margin-bottom:12px;}
-
-/* 指标卡片网格 */
-.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.mc2{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;position:relative;overflow:hidden;transition:border-color .15s,box-shadow .15s;}
+/* ─ Health card ─ */
+.health-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 20px;
+  box-shadow:var(--shadow);
+}
+.health-card h4{font-size:13px;font-weight:700;margin-bottom:14px;color:var(--text);}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.mc2{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--rs);padding:11px 13px;
+  position:relative;overflow:hidden;
+  transition:border-color .15s,box-shadow .15s;
+}
 .mc2:hover{border-color:var(--border2);box-shadow:var(--shadow-sm);}
-.mc2-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
+.mc2-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px;}
 .mc2-lbl{font-size:11px;color:var(--text2);line-height:1.3;}
-.mc2-ic{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
-.mc2-val{font-size:18px;font-weight:800;line-height:1;letter-spacing:-.5px;}
-.mc2-foot{display:flex;align-items:center;gap:4px;margin-top:4px;}
+.mc2-val{font-size:19px;font-weight:900;line-height:1;letter-spacing:-.5px;}
+.mc2-foot{display:flex;align-items:center;gap:5px;margin-top:5px;}
 .mc2-ref{font-size:10px;color:var(--text3);}
-.mc2-chg{font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;}
-.mc2-chg-up{background:rgba(207,34,46,.08);color:#cf222e;}
-.mc2-chg-dn{background:rgba(26,127,55,.08);color:#1a7f37;}
-.mc2-chg-fl{background:rgba(100,116,139,.08);color:#8c96a3;}
-.mc2-bar{position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0;}
+.mc2-chg{font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px;}
+.mc2-chg-up{background:var(--red-bg);color:var(--red);}
+.mc2-chg-dn{background:var(--green-bg);color:var(--green);}
+.mc2-chg-fl{background:rgba(100,116,139,.08);color:var(--text3);}
 
-/* 旧的 h-row 保留兼容 */
-.h-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
-.h-row:last-child{border-bottom:none;}
-.h-lbl{width:80px;font-size:12px;color:var(--text2);flex-shrink:0;}
-.h-bar{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;}
-.h-fill{height:100%;border-radius:2px;}
-.h-val{width:42px;text-align:right;font-size:12px;font-weight:700;}
-.h-ic{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
-
-/* ─ Trend ─ */
-.trend-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;box-shadow:var(--shadow);}
-.trend-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0;}
-.trend-hdr h4{font-size:13px;font-weight:600;}
-.trend-tabs{display:flex;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:6px;overflow:hidden;flex-shrink:0;}
-.trend-tab{font-size:11px;padding:4px 11px;color:var(--text2);cursor:pointer;transition:.12s;white-space:nowrap;border-right:1px solid var(--border);}
+/* ─ Trend card ─ */
+.trend-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 20px;
+  display:flex;flex-direction:column;
+  box-shadow:var(--shadow);
+}
+.trend-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0;}
+.trend-hdr h4{font-size:13px;font-weight:700;color:var(--text);}
+.trend-tabs{
+  display:flex;gap:0;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;flex-shrink:0;
+}
+.trend-tab{
+  font-size:11px;padding:5px 13px;
+  color:var(--text2);cursor:pointer;
+  transition:.12s;white-space:nowrap;
+  border-right:1px solid var(--border);
+  font-weight:500;
+}
 .trend-tab:last-child{border-right:none;}
 .trend-tab:hover{color:var(--text);background:var(--bg4);}
-.trend-tab.act{color:#fff;font-weight:600;}
-.trend-canvas-wrap{flex:1;position:relative;min-height:140px;margin-top:10px;}
-.trend-legend{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text2);}
-.leg-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;}
+.trend-tab.act{color:#fff;font-weight:700;}
+.trend-canvas-wrap{flex:1;position:relative;min-height:150px;margin-top:8px;}
 
 /* ─ Issues ─ */
-.issues-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
-.issues-hdr{padding:14px 18px 0;border-bottom:1px solid var(--border);}
-.issues-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.issues-hdr-top h3{font-size:14px;font-weight:600;}
+.issues-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  margin-bottom:22px;box-shadow:var(--shadow);
+}
+.issues-hdr{padding:16px 20px 0;border-bottom:1px solid var(--border);}
+.issues-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.issues-hdr-top h3{font-size:14px;font-weight:700;color:var(--text);}
 .itabs{display:flex;}
-.itab{padding:7px 14px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:.12s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.itab{
+  padding:8px 15px;font-size:13px;color:var(--text2);
+  cursor:pointer;border-bottom:2px solid transparent;
+  transition:.12s;display:flex;align-items:center;gap:5px;white-space:nowrap;
+  font-weight:500;
+}
 .itab:hover{color:var(--text);}
-.itab.act{color:var(--blue);border-bottom-color:var(--blue);font-weight:600;}
-.itab .tc{font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:10px;border:1px solid var(--border);}
-.itab.act .tc{background:rgba(9,105,218,.08);color:var(--blue);border-color:rgba(9,105,218,.2);}
+.itab.act{color:var(--primary);border-bottom-color:var(--primary);font-weight:700;}
+.itab .tc{font-size:11px;background:var(--bg3);padding:1px 6px;border-radius:10px;border:1px solid var(--border);transition:.12s;}
+.itab.act .tc{background:var(--blue-bg);color:var(--primary);border-color:var(--blue-border);}
 .tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 thead tr{background:var(--bg3);}
-th{padding:9px 14px;text-align:left;font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;border-bottom:1px solid var(--border);}
-td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+th{
+  padding:10px 15px;text-align:left;
+  font-size:11px;color:var(--text3);
+  font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  white-space:nowrap;border-bottom:1px solid var(--border);
+}
+td{padding:11px 15px;border-bottom:1px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tbody tr:hover td{background:var(--bg3);}
-.rk{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-.rk1{background:linear-gradient(135deg,#b45309,#d97706);color:#fff;}
-.rk2{background:linear-gradient(135deg,#374151,#6b7280);color:#fff;}
-.rk3{background:linear-gradient(135deg,#92400e,#b45309);color:#fff;}
+.rk{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.rk1{background:linear-gradient(135deg,#b45309,#f59e0b);color:#fff;box-shadow:0 2px 5px rgba(180,83,9,.3);}
+.rk2{background:linear-gradient(135deg,#475569,#94a3b8);color:#fff;}
+.rk3{background:linear-gradient(135deg,#92400e,#d97706);color:#fff;}
 .rkn{background:var(--bg4);color:var(--text3);border:1px solid var(--border);}
-.iid{font-family:monospace;font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 5px;border-radius:3px;border:1px solid var(--border);}
-.inm{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.iid{font-family:'SF Mono',Consolas,monospace;font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 6px;border-radius:4px;border:1px solid var(--border);}
+.inm{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;}
 .isig{font-size:11px;color:var(--text3);margin-top:2px;}
-.sp{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:20px;border-radius:4px;font-size:11px;font-weight:700;padding:0 5px;}
-.sp9{background:rgba(207,34,46,.08);color:#cf222e;border:1px solid rgba(207,34,46,.2);}
-.sp7{background:rgba(154,103,0,.08);color:#9a6700;border:1px solid rgba(154,103,0,.2);}
-.sp5{background:rgba(9,105,218,.08);color:#0969da;border:1px solid rgba(9,105,218,.2);}
+.sp{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:21px;border-radius:5px;font-size:11px;font-weight:700;padding:0 6px;}
+.sp9{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.sp7{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border);}
+.sp5{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border);}
 .sp3{background:var(--bg4);color:var(--text3);border:1px solid var(--border);}
-.dv{font-weight:600;}.dvl{color:#cf222e;}.dvm{color:#9a6700;}
+.dv{font-weight:700;}.dvl{color:var(--red);}.dvm{color:var(--orange);}
 .tags{display:flex;flex-wrap:wrap;gap:3px;}
-.tg{font-size:11px;padding:1px 6px;border-radius:10px;font-weight:500;}
-.tg-crit{background:rgba(207,34,46,.08);color:#cf222e;border:1px solid rgba(207,34,46,.15);}
-.tg-hi{background:rgba(154,103,0,.08);color:#9a6700;border:1px solid rgba(154,103,0,.15);}
-.tg-core{background:rgba(102,57,186,.08);color:#6639ba;border:1px solid rgba(102,57,186,.15);}
-.tg-new{background:rgba(26,127,55,.08);color:#1a7f37;border:1px solid rgba(26,127,55,.15);}
+.tg{font-size:11px;padding:2px 7px;border-radius:10px;font-weight:600;}
+.tg-crit{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.tg-hi{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border);}
+.tg-core{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);}
+.tg-new{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
 .tg-med{background:var(--bg4);color:var(--text3);border:1px solid var(--border);}
 .sdot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px;}
-.so{background:#cf222e;}
-.sp_{background:#9a6700;}
-.sd{background:#1a7f37;}
+.so{background:var(--red);}.sp_{background:var(--orange);}.sd{background:var(--green);}
 .stxt{font-size:12px;display:flex;align-items:center;}
 
 /* ─ Sentiment ─ */
-.sent-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
-.sent-hdr{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;background:var(--bg3);}
-.sent-body{padding:14px 16px;}
-.sent-store{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.sent-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.sent-hdr{
+  padding:12px 18px;border-bottom:1px solid var(--border);
+  font-size:13px;font-weight:700;color:var(--text);
+  background:var(--bg3);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sent-body{padding:14px 18px;}
+.sent-store{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
 .sent-store:last-of-type{border-bottom:none;}
-.sent-plat{font-size:13px;font-weight:500;}
+.sent-plat{font-size:13px;font-weight:600;color:var(--text);}
 .sent-right{display:flex;align-items:center;gap:8px;}
 .sent-rt{font-size:14px;font-weight:700;}
 .sent-cnt{font-size:11px;color:var(--text3);}
-.sent-sample{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5;}
+.sent-sample{font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5;}
 
-/* Footer */
-.foot{text-align:center;padding:16px;color:var(--text3);font-size:11px;border-top:1px solid var(--border);background:var(--bg2);}
+/* ─ Badges ─ */
+.bdg{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px;}
+.bdg-up{background:var(--red-bg);color:var(--red);}
+.bdg-dn{background:var(--green-bg);color:var(--green);}
+.bdg-fl{background:rgba(100,116,139,.08);color:var(--text3);}
 
-::-webkit-scrollbar{width:4px;height:4px;}
+/* ─ Footer ─ */
+.foot{
+  text-align:center;padding:18px;color:var(--text3);
+  font-size:11px;border-top:1px solid var(--border);
+  background:var(--bg2);
+}
+
+/* ─ Scrollbar ─ */
+::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--bg3);}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-@keyframes spin{to{transform:rotate(360deg);}}.spin{animation:spin .7s linear infinite;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--primary);}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin{animation:spin .7s linear infinite;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.wrap > *{animation:fadeIn .3s ease both;}
 </style>
 </head>
 <body>
@@ -255,7 +390,7 @@ tbody tr:hover td{background:var(--bg3);}
   <div class="gauge-wrap">
     <canvas id="gaugeCanvas" width="180" height="180"></canvas>
     <div class="gauge-center">
-      <div class="gauge-num" id="gNum" style="color:#9a6700">0</div>
+      <div class="gauge-num" id="gNum" style="color:#e65100">0</div>
       <div class="gauge-denom">/ 100</div>
       <div class="gauge-lv" id="gLv">—</div>
     </div>
@@ -264,21 +399,20 @@ tbody tr:hover td{background:var(--bg3);}
     <div class="hero-main" id="hTitle">正在评分...</div>
     <div class="hero-desc" id="hDesc">—</div>
     <div class="chips" id="hChips"></div>
-
   </div>
 </div>
 
-<!-- ===== 修复项（重点） ===== -->
+<!-- 待修复项 -->
 <div class="sec"><span class="sec-dot"></span>待修复项 <span id="fixTotal" style="color:var(--text3);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;">—</span></div>
 <div class="fix-card" id="fixCard"></div>
 
 <!-- 评分维度 -->
-<div class="sec" style="margin-top:20px;"><span class="sec-dot"></span>评分维度</div>
+<div class="sec" style="margin-top:22px;"><span class="sec-dot"></span>评分维度</div>
 <div class="row3" id="dimGrid"></div>
 
 <!-- 指标健康度 + 趋势 -->
 <div class="sec"><span class="sec-dot"></span>指标健康度 & 趋势（近7天）</div>
-<div class="row2" style="margin-bottom:20px;align-items:stretch;">
+<div class="row2" style="margin-bottom:22px;align-items:stretch;">
   <div class="health-card">
     <h4>关键指标</h4>
     <div class="metric-grid" id="healthRows"></div>
@@ -287,7 +421,7 @@ tbody tr:hover td{background:var(--bg3);}
     <div class="trend-hdr">
       <h4>7 天趋势</h4>
       <div class="trend-tabs" id="trendTabs">
-        <div class="trend-tab act" style="background:#cf222e;color:#fff;" onclick="switchTrend(this,'crash')">崩溃率</div>
+        <div class="trend-tab act" style="background:#d32f2f;" onclick="switchTrend(this,'crash')">崩溃率</div>
         <div class="trend-tab" onclick="switchTrend(this,'anr')">ANR率</div>
         <div class="trend-tab" onclick="switchTrend(this,'foom')">FOOM率</div>
       </div>
@@ -326,16 +460,14 @@ tbody tr:hover td{background:var(--bg3);}
 
 <!-- 舆情 -->
 <div class="sec"><span class="sec-dot"></span>质量舆情</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-  <!-- 左：商店评分 + 趋势 -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;">
   <div class="sent-card">
-    <div class="sent-hdr" style="display:flex;align-items:center;justify-content:space-between;">
+    <div class="sent-hdr">
       <span>应用商店评分</span>
       <span style="font-size:11px;color:var(--text3);font-weight:400;">近7天</span>
     </div>
     <div class="sent-body" id="sentStores"></div>
   </div>
-  <!-- 右：热词 + 舆情详情 -->
   <div style="display:flex;flex-direction:column;gap:12px;">
     <div class="sent-card">
       <div class="sent-hdr">用户反馈热词</div>
@@ -348,21 +480,20 @@ tbody tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
-</div><!-- /wrap -->
+</div>
 <div class="foot">Bugly 智能质量评分 Demo · 数据为虚构演示</div>
 
 <script>
-// ═══ 数据 ═══
-const D = {
-  crashRate:0.312, crashRatePrev:0.278,
-  crashRateByCount:1.953, crashRateByCountPrev:0.195,
-  anrRate:0.187,   anrRatePrev:0.201,
-  foomRate:0.042,  foomRatePrev:0.038,
-  jankRate:1.87,   jankRatePrev:2.14,
-  devices:2373000, devicesPrev:2318000,
-  crashCount:72743,  crashCountPrev:90950,
-  affectedDevices:18420, affectedDevicesPrev:15200,
-  launchCount:23510000, launchCountPrev:24100000,
+const D={
+  crashRate:0.312,crashRatePrev:0.278,
+  crashRateByCount:1.953,crashRateByCountPrev:0.195,
+  anrRate:0.187,anrRatePrev:0.201,
+  foomRate:0.042,foomRatePrev:0.038,
+  jankRate:1.87,jankRatePrev:2.14,
+  devices:2373000,devicesPrev:2318000,
+  crashCount:72743,crashCountPrev:90950,
+  affectedDevices:18420,affectedDevicesPrev:15200,
+  launchCount:23510000,launchCountPrev:24100000,
   trend:{
     crash:[0.41,0.38,0.35,0.44,0.29,0.31,0.31],
     anr:  [0.24,0.22,0.20,0.28,0.18,0.19,0.19],
@@ -426,7 +557,6 @@ const ISSUES={
   ]
 };
 
-// ═══ 评分 ═══
 function decay(i){return 1/Math.log(i+2);}
 function sigLvl(sig){
   if(["SIGSEGV","SIGABRT","SIGTRAP"].includes(sig))return{l:"Critical",s:2};
@@ -445,37 +575,34 @@ function scoreIssue(is,i){
 }
 
 function calc(){
-  const cr=D.stability.cr, ar=D.stability.ar;
+  const cr=D.stability.cr,ar=D.stability.ar;
   const s11=cr<=.1?16:cr<=.2?14:cr<=.3?11:cr<=.5?7:cr<=1?3:0;
   const s12=ar<=.05?12:ar<=.1?10:ar<=.2?7:ar<=.4?3:0;
   const s13=D.stability.burst?0:8;
   const s14=D.stability.trend==="down"?4:D.stability.trend==="flat"?2:0;
   const stab=s11+s12+s13+s14;
-
   const list=ISSUES.crash.slice(0,20).map((is,i)=>scoreIssue(is,i));
   const W=list.reduce((s,x)=>s+x.w,0);
   const Wmax=Array.from({length:20},(_,i)=>10*decay(i)).reduce((a,b)=>a+b,0);
   const sev=Math.min(30,Math.max(0,Math.round(30*(1-W/Wmax))+Math.min(5,list.filter(x=>x.total>=7&&x.st!=="open").length)));
-
   const ft=D.ops.feat;
   const resp=D.ops.top10>=10?10:D.ops.top10>=8?8:D.ops.top10>=6?5:D.ops.top10>=4?3:0;
   const feat=Math.round(Math.min(8,(ft.symbol?2:0)+(ft.anr?2:0)+(ft.oom?1.5:0)+(ft.log?1:0)+(ft.alert?1:0)+(ft.ver?.5:0)));
   const logS=!D.ops.logSdk?0:D.ops.logRatio>=.6?2:D.ops.logRatio>=.3?1:0;
   const ops=resp+feat+logS;
-
-  const sent=6; // 舆情维度，综合评分6/10
+  const sent=6;
   const total=stab+sev+ops+sent;
   return{total,stab,sev,ops,sent,sub:{stab:{s11,s12,s13,s14},ops:{resp,feat,log:logS}},list};
 }
 const SC=calc();
 
-function scColor(s,m){const p=s/m;return p>=.8?"#1a7f37":p>=.6?"#0969da":p>=.4?"#9a6700":"#cf222e";}
-function totColor(s){return s>=80?"#1a7f37":s>=65?"#0969da":s>=45?"#9a6700":"#cf222e";}
+function scColor(s,m){const p=s/m;return p>=.8?"#2e7d32":p>=.6?"#1565c0":p>=.4?"#e65100":"#d32f2f";}
+function totColor(s){return s>=80?"#2e7d32":s>=65?"#1565c0":s>=45?"#e65100":"#d32f2f";}
 function lvInfo(s){
-  if(s>=80)return{t:"优秀",c:"#1a7f37",bg:"rgba(26,127,55,.1)"};
-  if(s>=65)return{t:"良好",c:"#0969da",bg:"rgba(9,105,218,.1)"};
-  if(s>=45)return{t:"待改进",c:"#9a6700",bg:"rgba(154,103,0,.1)"};
-  return{t:"较差",c:"#cf222e",bg:"rgba(207,34,46,.1)"};
+  if(s>=80)return{t:"优秀",c:"#2e7d32",bg:"rgba(46,125,50,.1)"};
+  if(s>=65)return{t:"良好",c:"#1565c0",bg:"rgba(21,101,192,.1)"};
+  if(s>=45)return{t:"待改进",c:"#e65100",bg:"rgba(230,81,0,.1)"};
+  return{t:"较差",c:"#d32f2f",bg:"rgba(211,47,47,.1)"};
 }
 function fmtDv(n){return n>=10000?(n/10000).toFixed(1)+"w":n.toLocaleString();}
 
@@ -487,57 +614,64 @@ function drawGauge(val){
   cv.style.width="180px"; cv.style.height="180px";
   const ctx=cv.getContext("2d"); ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,180,180);
-  const cx=90,cy=95,R=72,sw=12;
-  const start=Math.PI*.75, end=Math.PI*2.25;
+  const cx=90,cy=95,R=72,sw=11;
+  const start=Math.PI*.75,end=Math.PI*2.25;
   const total_arc=end-start;
 
   // 背景弧
   ctx.beginPath(); ctx.arc(cx,cy,R,start,end);
-  ctx.strokeStyle="rgba(225,228,232,.9)"; ctx.lineWidth=sw; ctx.lineCap="round"; ctx.stroke();
+  ctx.strokeStyle="rgba(221,227,238,.9)"; ctx.lineWidth=sw; ctx.lineCap="round"; ctx.stroke();
 
-  // 颜色分段
+  // 颜色分段背景
   const segs=[
-    {from:0,to:.45,c:"#cf222e"},{from:.45,to:.65,c:"#9a6700"},
-    {from:.65,to:.8,c:"#0969da"},{from:.8,to:1,c:"#1a7f37"}
+    {from:0,to:.45,c:"#d32f2f"},{from:.45,to:.65,c:"#e65100"},
+    {from:.65,to:.8,c:"#1565c0"},{from:.8,to:1,c:"#2e7d32"}
   ];
   segs.forEach(seg=>{
     ctx.beginPath();
     ctx.arc(cx,cy,R,start+seg.from*total_arc,start+seg.to*total_arc);
-    ctx.strokeStyle=seg.c+"33"; ctx.lineWidth=sw; ctx.lineCap="butt"; ctx.stroke();
+    ctx.strokeStyle=seg.c+"28"; ctx.lineWidth=sw; ctx.lineCap="butt"; ctx.stroke();
   });
 
-  // 当前值弧
+  // 当前值弧（渐变）
   const pct=Math.min(val/100,1);
   if(pct>0){
-    const segColor=val>=80?"#1a7f37":val>=65?"#0969da":val>=45?"#9a6700":"#cf222e";
-    const grad=ctx.createLinearGradient(cx-R,cy,cx+R,cy);
-    grad.addColorStop(0,segColor+"99"); grad.addColorStop(1,segColor);
-    ctx.beginPath(); ctx.arc(cx,cy,R,start,start+pct*total_arc);
+    const segColor=val>=80?"#2e7d32":val>=65?"#1565c0":val>=45?"#e65100":"#d32f2f";
+    const endAngle=start+pct*total_arc;
+    const grad=ctx.createLinearGradient(
+      cx+R*Math.cos(start),cy+R*Math.sin(start),
+      cx+R*Math.cos(endAngle),cy+R*Math.sin(endAngle)
+    );
+    grad.addColorStop(0,segColor+"88");
+    grad.addColorStop(1,segColor);
+    ctx.beginPath(); ctx.arc(cx,cy,R,start,endAngle);
     ctx.strokeStyle=grad; ctx.lineWidth=sw; ctx.lineCap="round"; ctx.stroke();
-    // 末端亮点
-    const angle=start+pct*total_arc;
-    const ex=cx+R*Math.cos(angle), ey=cy+R*Math.sin(angle);
-    ctx.beginPath(); ctx.arc(ex,ey,sw/2+1,0,Math.PI*2);
+    // 末端光点
+    const ex=cx+R*Math.cos(endAngle), ey=cy+R*Math.sin(endAngle);
+    ctx.beginPath(); ctx.arc(ex,ey,sw/2+2,0,Math.PI*2);
+    ctx.fillStyle=segColor+"33"; ctx.fill();
+    ctx.beginPath(); ctx.arc(ex,ey,sw/2,0,Math.PI*2);
     ctx.fillStyle=segColor; ctx.fill();
-    ctx.beginPath(); ctx.arc(ex,ey,4,0,Math.PI*2);
+    ctx.beginPath(); ctx.arc(ex,ey,3.5,0,Math.PI*2);
     ctx.fillStyle="#fff"; ctx.fill();
   }
 
   // 刻度
   for(let i=0;i<=10;i++){
     const a=start+(i/10)*total_arc;
-    const r1=R-sw/2-2, r2=R+sw/2+2;
-    const cos=Math.cos(a), sin=Math.sin(a);
-    ctx.beginPath(); ctx.moveTo(cx+r1*cos,cy+r1*sin); ctx.lineTo(cx+r2*cos,cy+r2*sin);
-    ctx.strokeStyle=i%5===0?"rgba(140,150,163,.6)":"rgba(225,228,232,.8)";
+    const r1=R-sw/2-2,r2=R+sw/2+2;
+    ctx.beginPath();
+    ctx.moveTo(cx+r1*Math.cos(a),cy+r1*Math.sin(a));
+    ctx.lineTo(cx+r2*Math.cos(a),cy+r2*Math.sin(a));
+    ctx.strokeStyle=i%5===0?"rgba(120,136,160,.5)":"rgba(221,227,238,.8)";
     ctx.lineWidth=i%5===0?1.5:1; ctx.stroke();
   }
 
-  // 刻度标签
+  // 标签
   [0,50,100].forEach((v,idx)=>{
     const a=start+(idx*0.5)*total_arc;
     const lr=R+22;
-    ctx.fillStyle="rgba(140,150,163,.8)"; ctx.font=`10px sans-serif`;
+    ctx.fillStyle="rgba(136,153,176,.8)"; ctx.font="10px sans-serif";
     ctx.textAlign="center"; ctx.textBaseline="middle";
     ctx.fillText(v,cx+lr*Math.cos(a),cy+lr*Math.sin(a));
   });
@@ -559,20 +693,12 @@ function renderHero(){
     if(cur>=SC.total){clearInterval(tmr);drawGauge(SC.total);}
   },22);
 
-  const descMap={
-    "优秀":"整体质量表现优异，崩溃和 ANR 均在行业优秀水平，建议持续保持。",
-    "良好":"整体质量良好，存在少量可优化项，建议关注核心路径崩溃及待处理问题。",
-    "待改进":"质量存在明显问题，崩溃率偏高或有重大未处理问题，建议优先修复高严重度问题。",
-    "较差":"质量较差，多项指标超出行业基准，建议立即启动质量专项治理。"
-  };
   document.getElementById("hTitle").textContent=`质量评级：${lv.t}（${SC.total} 分）`;
 
-  // 详细分析描述
   const critList=SC.list.filter(x=>x.total>=8&&x.st==="open");
   const coreOpen=SC.list.filter(x=>x.core&&x.st==="open");
   const oomOpen=[...ISSUES.oom].filter(x=>x.st!=="done");
   let descLines=[];
-  // 问题原因
   descLines.push(`当前崩溃率 ${D.crashRate.toFixed(3)}% 超出行业良好基准（0.2%），7天次数崩溃率峰值 ${D.crashRateByCount.toFixed(3)}%，较上周上升 ${(((D.crashRateByCount-D.crashRateByCountPrev)/D.crashRateByCountPrev)*100).toFixed(0)}%。`);
   if(critList.length) descLines.push(`根因：${critList.length} 个高危问题（${critList.map(x=>x.id.slice(0,8)).join("、")}）持续未处理，合计影响 ${fmtDv(critList.reduce((s,x)=>s+x.dv,0))} 台设备，其中 ${coreOpen.filter(x=>x.total>=8).length} 个命中支付/首页核心路径。`);
   if(oomOpen.length) descLines.push(`OOM 监控未开启，${oomOpen.length} 个内存问题（影响 ${fmtDv(oomOpen.reduce((s,x)=>s+x.dv,0))} 台）无法精准归因，建议尽快开启以获取完整堆栈。`);
@@ -580,31 +706,30 @@ function renderHero(){
   document.getElementById("hDesc").innerHTML=descLines.map((l,i)=>`<div style="margin-bottom:${i<descLines.length-1?"6px":"0"}">${l}</div>`).join("");
 
   const chips=[];
-  if(D.stability.cr>0.3) chips.push(`<span class="chip chip-y">⚠️ 崩溃率偏高</span>`);
+  if(D.stability.cr>0.3) chips.push(`<span class="chip chip-y">⚠ 崩溃率偏高</span>`);
   const crit=SC.list.filter(x=>x.total>=8&&x.st==="open").length;
   if(crit>0) chips.push(`<span class="chip chip-r">🚨 ${crit} 个高危未处理</span>`);
-  if(!D.ops.feat.oom) chips.push(`<span class="chip chip-y">💡 OOM 监控未开启</span>`);
-  if(!D.ops.feat.alert) chips.push(`<span class="chip chip-b">💡 告警未配置</span>`);
-  if(!chips.length) chips.push(`<span class="chip chip-g">✅ 无紧急风险</span>`);
+  if(!D.ops.feat.oom) chips.push(`<span class="chip chip-y">OOM 监控未开启</span>`);
+  if(!D.ops.feat.alert) chips.push(`<span class="chip chip-b">告警未配置</span>`);
+  if(!chips.length) chips.push(`<span class="chip chip-g">✓ 无紧急风险</span>`);
   document.getElementById("hChips").innerHTML=chips.join("");
-
 }
 
-// ═══ 修复项（大类+子类） ═══
+// ═══ 修复项 ═══
 function renderFix(){
   const groups=[
     {
-      icon:"🚨",name:"高危崩溃问题",color:"#cf222e",
+      icon:"🚨",name:"高危崩溃问题",color:"#d32f2f",
       items:SC.list.filter(x=>x.total>=8&&x.st==="open").map(x=>({
         prio:"urg",ptxt:"紧急",
         title:`${x.id} · ${x.name.slice(0,40)}${x.name.length>40?"...":""}`,
         desc:`影响 ${fmtDv(x.dv)} 台设备，严重度 ${x.total.toFixed(1)} 分，${x.core?"位于核心路径，":""}未处理`,
-        gain:`+2分`
+        gain:"+2分"
       })),
       scoreHint:"严重影响用户体验"
     },
     {
-      icon:"📉",name:"崩溃率优化",color:"#9a6700",
+      icon:"📉",name:"崩溃率优化",color:"#e65100",
       items:[
         D.stability.cr>0.3?{prio:"hi",ptxt:"高优",title:"将设备崩溃率降至 0.2% 以下",desc:`当前 ${D.stability.cr.toFixed(3)}%，修复 Top5 问题后预计可达行业良好基准`,gain:"+7分"}:null,
         D.stability.ar>0.1?{prio:"hi",ptxt:"高优",title:"将 ANR 率降至 0.1% 以下",desc:`当前 ${D.stability.ar.toFixed(3)}%，排查主线程阻塞问题（Top1 ANR 已影响 7433 台）`,gain:"+3分"}:null,
@@ -612,7 +737,7 @@ function renderFix(){
       scoreHint:"直接影响稳定性得分"
     },
     {
-      icon:"🛠️",name:"功能开启 & 配置",color:"#0969da",
+      icon:"🛠️",name:"功能开启 & 配置",color:"#1565c0",
       items:[
         !D.ops.feat.oom?{prio:"hi",ptxt:"高优",title:"开启 OOM 监控",desc:"OOM 监控未启用，3 个 OOM 问题影响 5300+ 设备，开启后获得精准内存信息",gain:"+1.5分"}:null,
         !D.ops.feat.alert?{prio:"med",ptxt:"建议",title:"配置崩溃突增告警",desc:"未配置超阈值告警，无法第一时间感知异常，建议配置企微通知",gain:"+1分"}:null,
@@ -621,7 +746,7 @@ function renderFix(){
       scoreHint:"影响运营得分"
     },
     {
-      icon:"🎯",name:"核心路径崩溃",color:"#6639ba",
+      icon:"🎯",name:"核心路径崩溃",color:"#6a1b9a",
       items:SC.list.filter(x=>x.core&&x.st==="open").map(x=>({
         prio:"hi",ptxt:"高优",
         title:`${x.id} · ${x.name.slice(0,38)}${x.name.length>38?"...":""}`,
@@ -643,7 +768,7 @@ function renderFix(){
         <span class="fix-group-name" style="color:${g.color}">${g.name}</span>
         <div class="fix-group-meta">
           <span class="fix-group-cnt">${g.items.length} 项</span>
-          <span class="fix-group-score" style="color:var(--text3)">${g.scoreHint}</span>
+          <span class="fix-group-score">${g.scoreHint}</span>
         </div>
         <span class="fix-group-arrow open">▶</span>
       </div>
@@ -671,84 +796,81 @@ function toggleGroup(hdr,gi){
 // ═══ 维度 ═══
 function renderDims(){
   const dims=[
-    {title:"稳定性",sub:"崩溃 & ANR",icon:"🛡️",bg:"rgba(9,105,218,.08)",sc:SC.stab,max:40,c:"#0969da",
+    {title:"稳定性",sub:"崩溃 & ANR",icon:"🛡️",bg:"rgba(21,101,192,.09)",sc:SC.stab,max:40,c:"#1565c0",
      subs:[{n:"设备崩溃率",s:SC.sub.stab.s11,m:16},{n:"ANR 率",s:SC.sub.stab.s12,m:12},{n:"突增检测",s:SC.sub.stab.s13,m:8},{n:"收敛趋势",s:SC.sub.stab.s14,m:4}]},
-    {title:"问题严重度",sub:"Top 20 加权",icon:"🔥",bg:"rgba(207,34,46,.08)",sc:SC.sev,max:30,c:"#cf222e",
+    {title:"问题严重度",sub:"Top 20 加权",icon:"🔥",bg:"rgba(211,47,47,.08)",sc:SC.sev,max:30,c:"#d32f2f",
      subs:[{n:"加权扣分",s:SC.sev,m:30},{n:"已处理奖励",s:Math.min(5,SC.list.filter(x=>x.total>=7&&x.st!=="open").length),m:5}]},
-    {title:"质量运营",sub:"响应 & 功能",icon:"⚙️",bg:"rgba(102,57,186,.08)",sc:SC.ops,max:20,c:"#6639ba",
+    {title:"质量运营",sub:"响应 & 功能",icon:"⚙️",bg:"rgba(106,27,154,.08)",sc:SC.ops,max:20,c:"#6a1b9a",
      subs:[{n:"问题响应率",s:SC.sub.ops.resp,m:10},{n:"功能开启",s:SC.sub.ops.feat,m:8},{n:"日志关联",s:SC.sub.ops.log,m:2}]},
-    {title:"质量舆情",sub:"用户评分 & 反馈",icon:"🗣️",bg:"rgba(27,124,93,.07)",sc:SC.sent,max:10,c:"#1b7c5d",
+    {title:"质量舆情",sub:"用户评分 & 反馈",icon:"🗣️",bg:"rgba(0,105,92,.07)",sc:SC.sent,max:10,c:"#00695c",
      subs:[{n:"商店评分",s:4,m:4},{n:"差评关键词",s:null,m:3},{n:"舆情趋势",s:null,m:3}]},
   ];
 
   document.getElementById("dimGrid").innerHTML=dims.map(d=>{
     const pct=(d.sc/d.max*100).toFixed(0);
     const bc=scColor(d.sc,d.max);
-    const scoreDisplay=`<div class="dim-score" style="color:${bc}">${d.sc}</div><div class="dim-denom">/ ${d.max}</div>`;
     const subHtml=d.subs.map(s=>{
-      if(s.s===null) return `<div class="sub-row"><span class="sub-nm">${s.n}</span><div class="sub-bw"><div class="sub-bf" style="width:50%;background:rgba(27,124,93,.25);"></div></div><span class="sub-pt" style="color:var(--text3);font-size:10px;">接入中</span></div>`;
+      if(s.s===null) return `<div class="sub-row"><span class="sub-nm">${s.n}</span><div class="sub-bw"><div class="sub-bf" style="width:50%;background:rgba(0,105,92,.2);"></div></div><span class="sub-pt" style="color:var(--text3);font-size:10px;">接入中</span></div>`;
       const sp=(s.s/s.m*100).toFixed(0);
-      const sc=sp>=80?"#1a7f37":sp>=50?"#0969da":sp>=30?"#9a6700":"#cf222e";
-      return `<div class="sub-row"><span class="sub-nm">${s.n}</span><div class="sub-bw"><div class="sub-bf" style="width:${sp}%;background:${sc};"></div></div><span class="sub-pt" style="color:${sc}">${s.s}<small style="color:var(--text3);font-weight:400">/${s.m}</small></span></div>`;
+      const sc2=sp>=80?"#2e7d32":sp>=50?"#1565c0":sp>=30?"#e65100":"#d32f2f";
+      return `<div class="sub-row"><span class="sub-nm">${s.n}</span><div class="sub-bw"><div class="sub-bf" style="width:${sp}%;background:${sc2};"></div></div><span class="sub-pt" style="color:${sc2}">${s.s}<small style="color:var(--text3);font-weight:400">/${s.m}</small></span></div>`;
     }).join("");
     return `<div class="dim">
       <div class="dim-top">
-        <div>
-          <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;">
-            <div class="dim-ic" style="background:${d.bg}">${d.icon}</div>
-            <div><div class="dim-name">${d.title}</div><div class="dim-sub">${d.sub}</div></div>
-          </div>
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div class="dim-ic" style="background:${d.bg}">${d.icon}</div>
+          <div><div class="dim-name">${d.title}</div><div class="dim-sub">${d.sub}</div></div>
         </div>
-        <div style="text-align:right">${scoreDisplay}</div></div>
+        <div style="text-align:right">
+          <div class="dim-score" style="color:${bc}">${d.sc}</div>
+          <div class="dim-denom">/ ${d.max}</div>
+        </div>
+      </div>
       <div class="dim-bar"><div class="dim-bar-f" style="width:${pct}%;background:${bc};"></div></div>
       <div class="sub-rows">${subHtml}</div>
     </div>`;
   }).join("");
 }
 
-// ═══ 健康度（指标卡片网格） ═══
+// ═══ 健康度 ═══
 function renderHealth(){
   const metrics=[
-    {l:"设备崩溃率",   v:D.crashRate,        fmt:v=>v.toFixed(3)+"%",
-     chg:((D.crashRate-D.crashRatePrev)/D.crashRatePrev*100), chgInv:true,
-     ref:"基准≤0.2%", good:.1, bad:1, inv:true},
-    {l:"次数崩溃率",   v:D.crashRateByCount, fmt:v=>v.toFixed(3)+"%",
-     chg:((D.crashRateByCount-D.crashRateByCountPrev)/D.crashRateByCountPrev*100), chgInv:true,
-     ref:"较上周", good:.2, bad:2, inv:true},
-    {l:"ANR 率",      v:D.anrRate,          fmt:v=>v.toFixed(3)+"%",
-     chg:((D.anrRate-D.anrRatePrev)/D.anrRatePrev*100), chgInv:true,
-     ref:"基准≤0.1%", good:.05, bad:.4, inv:true},
-    {l:"FOOM 率",     v:D.foomRate,         fmt:v=>v.toFixed(3)+"%",
-     chg:((D.foomRate-D.foomRatePrev)/D.foomRatePrev*100), chgInv:true,
-     ref:"较上周", good:.02, bad:.2, inv:true},
-    {l:"Top10 响应率", v:D.ops.top10/10,    fmt:v=>(v*100).toFixed(0)+"%",
-     chg:null, ref:"当前 "+D.ops.top10+"/10", good:1, bad:.4, inv:false},
-    {l:"日志关联率",   v:D.ops.logRatio,     fmt:v=>(v*100).toFixed(0)+"%",
-     chg:null, ref:"目标≥60%", good:.6, bad:.2, inv:false},
+    {l:"设备崩溃率",v:D.crashRate,fmt:v=>v.toFixed(3)+"%",
+     chg:((D.crashRate-D.crashRatePrev)/D.crashRatePrev*100),chgInv:true,
+     ref:"基准≤0.2%",good:.1,bad:1,inv:true},
+    {l:"次数崩溃率",v:D.crashRateByCount,fmt:v=>v.toFixed(3)+"%",
+     chg:((D.crashRateByCount-D.crashRateByCountPrev)/D.crashRateByCountPrev*100),chgInv:true,
+     ref:"较上周",good:.2,bad:2,inv:true},
+    {l:"ANR 率",v:D.anrRate,fmt:v=>v.toFixed(3)+"%",
+     chg:((D.anrRate-D.anrRatePrev)/D.anrRatePrev*100),chgInv:true,
+     ref:"基准≤0.1%",good:.05,bad:.4,inv:true},
+    {l:"FOOM 率",v:D.foomRate,fmt:v=>v.toFixed(3)+"%",
+     chg:((D.foomRate-D.foomRatePrev)/D.foomRatePrev*100),chgInv:true,
+     ref:"较上周",good:.02,bad:.2,inv:true},
+    {l:"Top10 响应率",v:D.ops.top10/10,fmt:v=>(v*100).toFixed(0)+"%",
+     chg:null,ref:"当前 "+D.ops.top10+"/10",good:1,bad:.4,inv:false},
+    {l:"日志关联率",v:D.ops.logRatio,fmt:v=>(v*100).toFixed(0)+"%",
+     chg:null,ref:"目标≥60%",good:.6,bad:.2,inv:false},
   ];
 
   document.getElementById("healthRows").innerHTML=metrics.map(m=>{
     const health=m.inv
-      ? Math.max(0,Math.min(1,1-(m.v-m.good)/(m.bad-m.good)))
-      : Math.max(0,Math.min(1,(m.v-m.bad)/(m.good-m.bad)));
-    const c=health>=.7?"#1a7f37":health>=.4?"#9a6700":"#cf222e";
-    const bgC=health>=.7?"rgba(26,127,55,.05)":health>=.4?"rgba(154,103,0,.05)":"rgba(207,34,46,.05)";
-    const icBg=health>=.7?"rgba(26,127,55,.1)":health>=.4?"rgba(154,103,0,.1)":"rgba(207,34,46,.1)";
-
+      ?Math.max(0,Math.min(1,1-(m.v-m.good)/(m.bad-m.good)))
+      :Math.max(0,Math.min(1,(m.v-m.bad)/(m.good-m.bad)));
+    const c=health>=.7?"#2e7d32":health>=.4?"#e65100":"#d32f2f";
+    const bgC=health>=.7?"rgba(46,125,50,.05)":health>=.4?"rgba(230,81,0,.05)":"rgba(211,47,47,.05)";
     let chgHtml="";
     if(m.chg!==null){
       const chgV=m.chg.toFixed(1);
-      // 对于反向指标：上涨是坏的（红）；正向指标：上涨是好的（绿）
       const isBad=m.chgInv?(m.chg>0):(m.chg<0);
       const chgCls=Math.abs(m.chg)<1?"mc2-chg-fl":isBad?"mc2-chg-up":"mc2-chg-dn";
       const arrow=m.chg>0?"↑":"↓";
       chgHtml=`<span class="mc2-chg ${chgCls}">${arrow}${Math.abs(+chgV)}%</span>`;
     }
-
     return `<div class="mc2" style="background:${bgC};border-color:${c}22;">
       <div class="mc2-top">
         <div class="mc2-lbl">${m.l}</div>
-        <div style="width:7px;height:7px;border-radius:50%;background:${c};flex-shrink:0;margin-top:2px;box-shadow:0 0 5px ${c}88;"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0;margin-top:2px;box-shadow:0 0 6px ${c}66;"></div>
       </div>
       <div class="mc2-val" style="color:${c}">${m.fmt(m.v)}</div>
       <div class="mc2-foot">
@@ -762,27 +884,29 @@ function renderHealth(){
 // ═══ 趋势 ═══
 let curTrend="crash";
 function switchTrend(el,k){
-  const colors={crash:"#cf222e",anr:"#9a6700",foom:"#6639ba"};
+  const colors={crash:"#d32f2f",anr:"#e65100",foom:"#6a1b9a"};
   document.querySelectorAll(".trend-tab").forEach(t=>{
     t.classList.remove("act");
     t.style.background="";
+    t.style.color="";
   });
   el.classList.add("act");
-  el.style.background=colors[k]||"#58a6ff";
+  el.style.background=colors[k]||"#1565c0";
+  el.style.color="#fff";
   curTrend=k; drawTrend(k);
 }
 
 const TREND_CFG={
-  crash:{label:"崩溃率 (%)",color:"#cf222e",fill:"rgba(207,34,46,.10)"},
-  anr:  {label:"ANR 率 (%)", color:"#9a6700",fill:"rgba(154,103,0,.08)"},
-  foom: {label:"FOOM 率 (%)",color:"#6639ba",fill:"rgba(102,57,186,.08)"},
-  jank: {label:"卡顿率 (%)", color:"#0969da",fill:"rgba(9,105,218,.08)"},
+  crash:{label:"崩溃率 (%)",color:"#d32f2f",fill:"rgba(211,47,47,.12)"},
+  anr:  {label:"ANR 率 (%)",color:"#e65100",fill:"rgba(230,81,0,.10)"},
+  foom: {label:"FOOM 率 (%)",color:"#6a1b9a",fill:"rgba(106,27,154,.10)"},
+  jank: {label:"卡顿率 (%)",color:"#1565c0",fill:"rgba(21,101,192,.10)"},
 };
 
 function drawTrend(key="crash"){
   const cv=document.getElementById("trendCanvas");
   const wrap=cv.parentElement;
-  const W=wrap.clientWidth||360, H=wrap.clientHeight||160;
+  const W=wrap.clientWidth||360,H=wrap.clientHeight||160;
   const dpr=window.devicePixelRatio||1;
   cv.width=W*dpr; cv.height=H*dpr;
   cv.style.width=W+"px"; cv.style.height=H+"px";
@@ -791,10 +915,17 @@ function drawTrend(key="crash"){
 
   const data=D.trend[key];
   const cfg=TREND_CFG[key];
-  const PAD={t:14,b:22,l:10,r:10};
-  const cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
-  const max=Math.max(...data)*1.3;
+  const PAD={t:16,b:24,l:12,r:12};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+  const max=Math.max(...data)*1.35;
   const days=["3/24","3/25","3/26","3/27","3/28","3/29","3/30"];
+
+  // 网格线
+  for(let i=0;i<=3;i++){
+    const y=PAD.t+cH*(1-i/3);
+    ctx.beginPath(); ctx.moveTo(PAD.l,y); ctx.lineTo(W-PAD.r,y);
+    ctx.strokeStyle="rgba(221,227,238,.6)"; ctx.lineWidth=1; ctx.stroke();
+  }
 
   const pts=data.map((v,i)=>({
     x:PAD.l+(i/(data.length-1))*cW,
@@ -803,7 +934,8 @@ function drawTrend(key="crash"){
 
   // Fill
   const grad=ctx.createLinearGradient(0,PAD.t,0,H-PAD.b);
-  grad.addColorStop(0,cfg.fill.replace("0.","0.4").replace(".12",".3").replace(".10",".25"));
+  grad.addColorStop(0,cfg.fill.replace("0.12","0.28").replace("0.10","0.22"));
+  grad.addColorStop(0.7,cfg.fill.replace("0.12","0.08").replace("0.10","0.06"));
   grad.addColorStop(1,"transparent");
   ctx.beginPath();
   ctx.moveTo(pts[0].x,H-PAD.b);
@@ -811,7 +943,7 @@ function drawTrend(key="crash"){
   ctx.lineTo(pts[pts.length-1].x,H-PAD.b);
   ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
 
-  // Line (smooth)
+  // Line
   ctx.beginPath();
   pts.forEach((p,i)=>{
     if(i===0){ctx.moveTo(p.x,p.y);return;}
@@ -819,21 +951,22 @@ function drawTrend(key="crash"){
     const cpx=(pp.x+p.x)/2;
     ctx.bezierCurveTo(cpx,pp.y,cpx,p.y,p.x,p.y);
   });
-  ctx.strokeStyle=cfg.color; ctx.lineWidth=2; ctx.stroke();
+  ctx.strokeStyle=cfg.color; ctx.lineWidth=2.5; ctx.lineJoin="round"; ctx.stroke();
 
-  // Dots & values
+  // Dots
   pts.forEach((p,i)=>{
-    ctx.beginPath(); ctx.arc(p.x,p.y,3.5,0,Math.PI*2);
+    ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2);
+    ctx.fillStyle="#fff"; ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x,p.y,2.5,0,Math.PI*2);
     ctx.fillStyle=cfg.color; ctx.fill();
-    ctx.fillStyle="rgba(26,31,46,.75)"; ctx.font=`9px sans-serif`; ctx.textAlign="center";
-    ctx.fillText(data[i].toFixed(2)+"%",p.x,p.y-8);
+    ctx.fillStyle="rgba(26,34,54,.7)"; ctx.font="9px sans-serif"; ctx.textAlign="center";
+    ctx.fillText(data[i].toFixed(2)+"%",p.x,p.y-9);
   });
 
   // X labels
-  ctx.fillStyle="rgba(140,150,163,.8)"; ctx.font=`9px sans-serif`; ctx.textAlign="center";
+  ctx.fillStyle="rgba(136,153,176,.9)"; ctx.font="9px sans-serif"; ctx.textAlign="center";
   days.forEach((d,i)=>{
-    const x=PAD.l+(i/(days.length-1))*cW;
-    ctx.fillText(d,x,H-4);
+    ctx.fillText(d,PAD.l+(i/(days.length-1))*cW,H-5);
   });
 }
 
@@ -859,11 +992,11 @@ function renderIssues(t){
     const stTxt=is.st==="open"?"待处理":is.st==="processing"?"处理中":"已处理";
     const sl=sigLvl(is.sig);
     const tags=[];
-    if(sl.l==="Critical") tags.push(`<span class="tg tg-crit">⚡ Critical</span>`);
-    else if(sl.l==="High") tags.push(`<span class="tg tg-hi">🔶 High</span>`);
+    if(sl.l==="Critical") tags.push(`<span class="tg tg-crit">Critical</span>`);
+    else if(sl.l==="High") tags.push(`<span class="tg tg-hi">High</span>`);
     else tags.push(`<span class="tg tg-med">Medium</span>`);
-    if(is.core) tags.push(`<span class="tg tg-core">🎯 核心</span>`);
-    if(is.nw)   tags.push(`<span class="tg tg-new">🆕 新增</span>`);
+    if(is.core) tags.push(`<span class="tg tg-core">核心路径</span>`);
+    if(is.nw)   tags.push(`<span class="tg tg-new">新增</span>`);
     return `<tr>
       <td><span class="rk ${rkC}">${i+1}</span></td>
       <td><span class="iid">${is.id}</span></td>
@@ -886,54 +1019,35 @@ function initTabs(){
 // ═══ 舆情 ═══
 function renderSentiment(){
   const stores=D.sentiment.stores;
-
-  // 商店评分 + 评分趋势迷你图
   document.getElementById("sentStores").innerHTML=`
-    <div style="display:flex;align-items:center;gap:10px;padding:10px 0 14px;border-bottom:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:14px;padding:10px 0 16px;border-bottom:1px solid var(--border);">
       <div style="text-align:center;flex-shrink:0;">
-        <div style="font-size:36px;font-weight:800;color:#9a6700;line-height:1;">3.5</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px;">综合评分</div>
-        <div style="color:#9a6700;font-size:14px;margin-top:2px;">★★★½☆</div>
+        <div style="font-size:38px;font-weight:900;color:#e65100;line-height:1;">3.5</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px;">综合评分</div>
+        <div style="color:#e65100;font-size:13px;margin-top:3px;letter-spacing:1px;">★★★½☆</div>
       </div>
       <div style="flex:1;">
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
-          <span style="font-size:11px;color:var(--text3);width:28px;">5星</span>
-          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:15%;height:100%;background:#1a7f37;border-radius:3px;"></div></div>
-          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">15%</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
-          <span style="font-size:11px;color:var(--text3);width:28px;">4星</span>
-          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:20%;height:100%;background:#0969da;border-radius:3px;"></div></div>
-          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">20%</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
-          <span style="font-size:11px;color:var(--text3);width:28px;">3星</span>
-          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:30%;height:100%;background:#9a6700;border-radius:3px;"></div></div>
-          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">30%</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
-          <span style="font-size:11px;color:var(--text3);width:28px;">2星</span>
-          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:20%;height:100%;background:#cf222e;border-radius:3px;"></div></div>
-          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">20%</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px;">
-          <span style="font-size:11px;color:var(--text3);width:28px;">1星</span>
-          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:15%;height:100%;background:#cf222e;border-radius:3px;opacity:.7;"></div></div>
-          <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;">15%</span>
-        </div>
+        ${[["5星","15%","#2e7d32"],["4星","20%","#1565c0"],["3星","30%","#e65100"],["2星","20%","#d32f2f"],["1星","15%","#d32f2f"]].map(([label,pct,color])=>`
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+          <span style="font-size:11px;color:var(--text3);width:26px;">${label}</span>
+          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;">
+            <div style="width:${pct};height:100%;background:${color};border-radius:3px;opacity:${label==="1星"?.7:1};"></div>
+          </div>
+          <span style="font-size:11px;color:var(--text3);width:26px;text-align:right;">${pct}</span>
+        </div>`).join("")}
       </div>
     </div>
     ${stores.map(s=>{
-      const rc=s.rating>=4?"#1a7f37":s.rating>=3?"#9a6700":"#cf222e";
+      const rc=s.rating>=4?"#2e7d32":s.rating>=3?"#e65100":"#d32f2f";
       const chg=s.chg||0;
-      const chgHtml=chg!==0?`<span style="font-size:10px;color:${chg>0?"#cf222e":"#1a7f37"};margin-left:4px;">${chg>0?"↑":"↓"}${Math.abs(chg).toFixed(1)}</span>`:"";
+      const chgHtml=chg!==0?`<span style="font-size:10px;color:${chg>0?"#d32f2f":"#2e7d32"};margin-left:4px;">${chg>0?"↑":"↓"}${Math.abs(chg).toFixed(1)}</span>`:"";
       return `<div class="sent-store">
         <div>
-          <div class="sent-plat" style="display:flex;align-items:center;gap:6px;">
+          <div class="sent-plat">
             ${s.name}
-            <a href="${s.url||"#"}" target="_blank" style="font-size:10px;color:var(--blue);text-decoration:none;opacity:.7;" title="查看详情">↗</a>
+            <a href="${s.url||"#"}" target="_blank" style="font-size:10px;color:var(--primary);text-decoration:none;opacity:.7;margin-left:4px;">↗</a>
           </div>
-          <div class="sent-sample" style="color:var(--text3);">「${s.sample}」</div>
+          <div class="sent-sample">「${s.sample}」</div>
         </div>
         <div class="sent-right">
           <div style="text-align:right;">
@@ -944,57 +1058,61 @@ function renderSentiment(){
       </div>`;
     }).join("")}
     <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:11px;color:var(--text3);">评分较上月 <span style="color:#cf222e;">↓0.3</span>，差评主因：崩溃 & 卡顿</span>
-      <a href="#" style="font-size:11px;color:var(--blue);text-decoration:none;">查看全部评论 →</a>
+      <span style="font-size:11px;color:var(--text3);">评分较上月 <span style="color:#d32f2f;">↓0.3</span>，差评主因：崩溃 & 卡顿</span>
+      <a href="#" style="font-size:11px;color:var(--primary);text-decoration:none;">查看全部评论 →</a>
     </div>`;
 
-  // 热词
   const words=D.sentiment.words;
   document.getElementById("sentWords").innerHTML=`
-    <div style="padding:12px 14px;">
+    <div style="padding:12px 0;">
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
         ${words.map(w=>`
-          <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 10px;border-radius:20px;
-            background:${w.neg?"rgba(207,34,46,.07)":"rgba(26,127,55,.07)"};
-            color:${w.neg?"#cf222e":"#1a7f37"};
-            border:1px solid ${w.neg?"rgba(207,34,46,.18)":"rgba(26,127,55,.18)"};">
-            ${w.w}<span style="font-size:10px;opacity:.7;">${w.cnt}</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 11px;border-radius:20px;
+            background:${w.neg?"var(--red-bg)":"var(--green-bg)"};
+            color:${w.neg?"var(--red)":"var(--green)"};
+            border:1px solid ${w.neg?"var(--red-border)":"var(--green-border)"};
+            font-weight:500;">
+            ${w.w}<span style="font-size:10px;opacity:.65;">${w.cnt}</span>
           </span>`).join("")}
       </div>
       <div style="display:flex;gap:16px;font-size:11px;color:var(--text3);">
-        <span>😡 负面 ${words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)} 条</span>
-        <span>😊 正面 ${words.filter(w=>!w.neg).reduce((s,w)=>s+w.cnt,0)} 条</span>
-        <span>负面占比 <span style="color:#cf222e;font-weight:600;">${(words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)/words.reduce((s,w)=>s+w.cnt,0)*100).toFixed(0)}%</span></span>
+        <span>负面 <strong style="color:var(--red)">${words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)}</strong> 条</span>
+        <span>正面 <strong style="color:var(--green)">${words.filter(w=>!w.neg).reduce((s,w)=>s+w.cnt,0)}</strong> 条</span>
+        <span>负面占比 <strong style="color:var(--red)">${(words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)/words.reduce((s,w)=>s+w.cnt,0)*100).toFixed(0)}%</strong></span>
       </div>
     </div>`;
 
-  // 近期差评摘要
   const reviews=[
-    {user:"匿名用户A",platform:"App Store",star:1,time:"3天前",content:"更新后一打开就闪退，已经连续出现3次了，严重影响使用，求修复！",tag:"崩溃",url:"#"},
-    {user:"手机用户B",platform:"应用宝",  star:2,time:"4天前",content:"购物车页面经常卡死，有时候直接黑屏，支付流程也出过问题，体验极差。",tag:"ANR",url:"#"},
-    {user:"买家C",    platform:"华为商店",star:2,time:"5天前",content:"视频播放卡顿非常严重，而且内存占用特别高，其他app打开后就莫名闪退。",tag:"OOM",url:"#"},
-    {user:"某用户",   platform:"App Store",star:1,time:"6天前",content:"登录之后白屏，强杀重进也没用，重装才恢复，这个bug已经反馈好几次了！",tag:"崩溃",url:"#"},
+    {user:"匿名用户A",platform:"App Store",star:1,time:"3天前",content:"更新后一打开就闪退，已经连续出现3次了，严重影响使用，求修复！",tag:"崩溃"},
+    {user:"手机用户B",platform:"应用宝",  star:2,time:"4天前",content:"购物车页面经常卡死，有时候直接黑屏，支付流程也出过问题，体验极差。",tag:"ANR"},
+    {user:"买家C",    platform:"华为商店",star:2,time:"5天前",content:"视频播放卡顿非常严重，而且内存占用特别高，其他app打开后就莫名闪退。",tag:"OOM"},
+    {user:"某用户",   platform:"App Store",star:1,time:"6天前",content:"登录之后白屏，强杀重进也没用，重装才恢复，这个bug已经反馈好几次了！",tag:"崩溃"},
   ];
-  const tagColor={"崩溃":"#cf222e","ANR":"#9a6700","OOM":"#6639ba","卡顿":"#0969da"};
+  const tagColor={"崩溃":"var(--red)","ANR":"var(--orange)","OOM":"var(--purple)","卡顿":"var(--blue)"};
+  const tagBg={"崩溃":"var(--red-bg)","ANR":"var(--orange-bg)","OOM":"var(--purple-bg)","卡顿":"var(--blue-bg)"};
+  const tagBorder={"崩溃":"var(--red-border)","ANR":"var(--orange-border)","OOM":"var(--purple-border)","卡顿":"var(--blue-border)"};
   document.getElementById("sentReviews").innerHTML=`
-    <div style="padding:0;">
+    <div>
       ${reviews.map((r,i)=>`
-        <div style="padding:10px 14px;${i<reviews.length-1?"border-bottom:1px solid var(--border);":""}">
+        <div style="padding:10px 0;${i<reviews.length-1?"border-bottom:1px solid var(--border);":""}">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
             <div style="display:flex;align-items:center;gap:6px;">
-              <span style="font-size:11px;font-weight:600;color:var(--text2);">${r.user}</span>
+              <span style="font-size:11px;font-weight:700;color:var(--text2);">${r.user}</span>
               <span style="font-size:10px;color:var(--text3);">${r.platform} · ${r.time}</span>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;background:${tagColor[r.tag]||"#8c96a3"}15;color:${tagColor[r.tag]||"#8c96a3"};border:1px solid ${tagColor[r.tag]||"#8c96a3"}30;">${r.tag}</span>
-              <span style="font-size:12px;color:#cf222e;">${"★".repeat(r.star)}${"☆".repeat(5-r.star)}</span>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;
+                background:${tagBg[r.tag]||"var(--bg4)"};
+                color:${tagColor[r.tag]||"var(--text3)"};
+                border:1px solid ${tagBorder[r.tag]||"var(--border)"};">${r.tag}</span>
+              <span style="font-size:12px;color:var(--orange);">${"★".repeat(r.star)}${"☆".repeat(5-r.star)}</span>
             </div>
           </div>
           <div style="font-size:12px;color:var(--text2);line-height:1.6;">${r.content}</div>
         </div>`).join("")}
-      <div style="padding:8px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div style="padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
         <span style="font-size:11px;color:var(--text3);">共 258 条差评 · 本周新增 47 条</span>
-        <a href="#" style="font-size:11px;color:var(--blue);text-decoration:none;">查看全部 →</a>
+        <a href="#" style="font-size:11px;color:var(--primary);text-decoration:none;">查看全部 →</a>
       </div>
     </div>`;
 }
