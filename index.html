@@ -255,7 +255,7 @@ tbody tr:hover td{background:var(--bg3);}
   <div class="gauge-wrap">
     <canvas id="gaugeCanvas" width="180" height="180"></canvas>
     <div class="gauge-center">
-      <div class="gauge-num" id="gNum" style="color:#d29922">0</div>
+      <div class="gauge-num" id="gNum" style="color:#9a6700">0</div>
       <div class="gauge-denom">/ 100</div>
       <div class="gauge-lv" id="gLv">—</div>
     </div>
@@ -287,7 +287,7 @@ tbody tr:hover td{background:var(--bg3);}
     <div class="trend-hdr">
       <h4>7 天趋势</h4>
       <div class="trend-tabs" id="trendTabs">
-        <div class="trend-tab act" style="background:#f85149;" onclick="switchTrend(this,'crash')">崩溃率</div>
+        <div class="trend-tab act" style="background:#cf222e;color:#fff;" onclick="switchTrend(this,'crash')">崩溃率</div>
         <div class="trend-tab" onclick="switchTrend(this,'anr')">ANR率</div>
         <div class="trend-tab" onclick="switchTrend(this,'foom')">FOOM率</div>
       </div>
@@ -594,7 +594,7 @@ function renderHero(){
 function renderFix(){
   const groups=[
     {
-      icon:"🚨",name:"高危崩溃问题",color:"#f85149",
+      icon:"🚨",name:"高危崩溃问题",color:"#cf222e",
       items:SC.list.filter(x=>x.total>=8&&x.st==="open").map(x=>({
         prio:"urg",ptxt:"紧急",
         title:`${x.id} · ${x.name.slice(0,40)}${x.name.length>40?"...":""}`,
@@ -604,7 +604,7 @@ function renderFix(){
       scoreHint:"严重影响用户体验"
     },
     {
-      icon:"📉",name:"崩溃率优化",color:"#d29922",
+      icon:"📉",name:"崩溃率优化",color:"#9a6700",
       items:[
         D.stability.cr>0.3?{prio:"hi",ptxt:"高优",title:"将设备崩溃率降至 0.2% 以下",desc:`当前 ${D.stability.cr.toFixed(3)}%，修复 Top5 问题后预计可达行业良好基准`,gain:"+7分"}:null,
         D.stability.ar>0.1?{prio:"hi",ptxt:"高优",title:"将 ANR 率降至 0.1% 以下",desc:`当前 ${D.stability.ar.toFixed(3)}%，排查主线程阻塞问题（Top1 ANR 已影响 7433 台）`,gain:"+3分"}:null,
@@ -612,7 +612,7 @@ function renderFix(){
       scoreHint:"直接影响稳定性得分"
     },
     {
-      icon:"🛠️",name:"功能开启 & 配置",color:"#58a6ff",
+      icon:"🛠️",name:"功能开启 & 配置",color:"#0969da",
       items:[
         !D.ops.feat.oom?{prio:"hi",ptxt:"高优",title:"开启 OOM 监控",desc:"OOM 监控未启用，3 个 OOM 问题影响 5300+ 设备，开启后获得精准内存信息",gain:"+1.5分"}:null,
         !D.ops.feat.alert?{prio:"med",ptxt:"建议",title:"配置崩溃突增告警",desc:"未配置超阈值告警，无法第一时间感知异常，建议配置企微通知",gain:"+1分"}:null,
@@ -621,7 +621,7 @@ function renderFix(){
       scoreHint:"影响运营得分"
     },
     {
-      icon:"🎯",name:"核心路径崩溃",color:"#bc8cff",
+      icon:"🎯",name:"核心路径崩溃",color:"#6639ba",
       items:SC.list.filter(x=>x.core&&x.st==="open").map(x=>({
         prio:"hi",ptxt:"高优",
         title:`${x.id} · ${x.name.slice(0,38)}${x.name.length>38?"...":""}`,
@@ -671,13 +671,13 @@ function toggleGroup(hdr,gi){
 // ═══ 维度 ═══
 function renderDims(){
   const dims=[
-    {title:"稳定性",sub:"崩溃 & ANR",icon:"🛡️",bg:"rgba(88,166,255,.12)",sc:SC.stab,max:40,c:"#58a6ff",
+    {title:"稳定性",sub:"崩溃 & ANR",icon:"🛡️",bg:"rgba(9,105,218,.08)",sc:SC.stab,max:40,c:"#0969da",
      subs:[{n:"设备崩溃率",s:SC.sub.stab.s11,m:16},{n:"ANR 率",s:SC.sub.stab.s12,m:12},{n:"突增检测",s:SC.sub.stab.s13,m:8},{n:"收敛趋势",s:SC.sub.stab.s14,m:4}]},
-    {title:"问题严重度",sub:"Top 20 加权",icon:"🔥",bg:"rgba(248,81,73,.12)",sc:SC.sev,max:30,c:"#f85149",
+    {title:"问题严重度",sub:"Top 20 加权",icon:"🔥",bg:"rgba(207,34,46,.08)",sc:SC.sev,max:30,c:"#cf222e",
      subs:[{n:"加权扣分",s:SC.sev,m:30},{n:"已处理奖励",s:Math.min(5,SC.list.filter(x=>x.total>=7&&x.st!=="open").length),m:5}]},
-    {title:"质量运营",sub:"响应 & 功能",icon:"⚙️",bg:"rgba(188,140,255,.12)",sc:SC.ops,max:20,c:"#bc8cff",
+    {title:"质量运营",sub:"响应 & 功能",icon:"⚙️",bg:"rgba(102,57,186,.08)",sc:SC.ops,max:20,c:"#6639ba",
      subs:[{n:"问题响应率",s:SC.sub.ops.resp,m:10},{n:"功能开启",s:SC.sub.ops.feat,m:8},{n:"日志关联",s:SC.sub.ops.log,m:2}]},
-    {title:"质量舆情",sub:"用户评分 & 反馈",icon:"🗣️",bg:"rgba(57,211,83,.1)",sc:SC.sent,max:10,c:"#3fb950",
+    {title:"质量舆情",sub:"用户评分 & 反馈",icon:"🗣️",bg:"rgba(27,124,93,.07)",sc:SC.sent,max:10,c:"#1b7c5d",
      subs:[{n:"商店评分",s:4,m:4},{n:"差评关键词",s:null,m:3},{n:"舆情趋势",s:null,m:3}]},
   ];
 
@@ -686,9 +686,9 @@ function renderDims(){
     const bc=scColor(d.sc,d.max);
     const scoreDisplay=`<div class="dim-score" style="color:${bc}">${d.sc}</div><div class="dim-denom">/ ${d.max}</div>`;
     const subHtml=d.subs.map(s=>{
-      if(s.s===null) return `<div class="sub-row"><span class="sub-nm">${s.n}</span><div class="sub-bw"><div class="sub-bf" style="width:50%;background:rgba(57,211,83,.3);"></div></div><span class="sub-pt" style="color:var(--text3);font-size:10px;">接入中</span></div>`;
+      if(s.s===null) return `<div class="sub-row"><span class="sub-nm">${s.n}</span><div class="sub-bw"><div class="sub-bf" style="width:50%;background:rgba(27,124,93,.25);"></div></div><span class="sub-pt" style="color:var(--text3);font-size:10px;">接入中</span></div>`;
       const sp=(s.s/s.m*100).toFixed(0);
-      const sc=sp>=80?"#3fb950":sp>=50?"#58a6ff":sp>=30?"#d29922":"#f85149";
+      const sc=sp>=80?"#1a7f37":sp>=50?"#0969da":sp>=30?"#9a6700":"#cf222e";
       return `<div class="sub-row"><span class="sub-nm">${s.n}</span><div class="sub-bw"><div class="sub-bf" style="width:${sp}%;background:${sc};"></div></div><span class="sub-pt" style="color:${sc}">${s.s}<small style="color:var(--text3);font-weight:400">/${s.m}</small></span></div>`;
     }).join("");
     return `<div class="dim">
@@ -762,7 +762,7 @@ function renderHealth(){
 // ═══ 趋势 ═══
 let curTrend="crash";
 function switchTrend(el,k){
-  const colors={crash:"#f85149",anr:"#d29922",foom:"#bc8cff"};
+  const colors={crash:"#cf222e",anr:"#9a6700",foom:"#6639ba"};
   document.querySelectorAll(".trend-tab").forEach(t=>{
     t.classList.remove("act");
     t.style.background="";
@@ -773,10 +773,10 @@ function switchTrend(el,k){
 }
 
 const TREND_CFG={
-  crash:{label:"崩溃率 (%)",color:"#f85149",fill:"rgba(248,81,73,.12)"},
-  anr:  {label:"ANR 率 (%)", color:"#d29922",fill:"rgba(210,153,34,.10)"},
-  foom: {label:"FOOM 率 (%)",color:"#bc8cff",fill:"rgba(188,140,255,.10)"},
-  jank: {label:"卡顿率 (%)", color:"#58a6ff",fill:"rgba(88,166,255,.10)"},
+  crash:{label:"崩溃率 (%)",color:"#cf222e",fill:"rgba(207,34,46,.10)"},
+  anr:  {label:"ANR 率 (%)", color:"#9a6700",fill:"rgba(154,103,0,.08)"},
+  foom: {label:"FOOM 率 (%)",color:"#6639ba",fill:"rgba(102,57,186,.08)"},
+  jank: {label:"卡顿率 (%)", color:"#0969da",fill:"rgba(9,105,218,.08)"},
 };
 
 function drawTrend(key="crash"){
@@ -924,9 +924,9 @@ function renderSentiment(){
       </div>
     </div>
     ${stores.map(s=>{
-      const rc=s.rating>=4?"#3fb950":s.rating>=3?"#d29922":"#f85149";
+      const rc=s.rating>=4?"#1a7f37":s.rating>=3?"#9a6700":"#cf222e";
       const chg=s.chg||0;
-      const chgHtml=chg!==0?`<span style="font-size:10px;color:${chg>0?"#f85149":"#3fb950"};margin-left:4px;">${chg>0?"↑":"↓"}${Math.abs(chg).toFixed(1)}</span>`:"";
+      const chgHtml=chg!==0?`<span style="font-size:10px;color:${chg>0?"#cf222e":"#1a7f37"};margin-left:4px;">${chg>0?"↑":"↓"}${Math.abs(chg).toFixed(1)}</span>`:"";
       return `<div class="sent-store">
         <div>
           <div class="sent-plat" style="display:flex;align-items:center;gap:6px;">
@@ -955,16 +955,16 @@ function renderSentiment(){
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
         ${words.map(w=>`
           <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 10px;border-radius:20px;
-            background:${w.neg?"rgba(248,81,73,.08)":"rgba(63,185,80,.08)"};
-            color:${w.neg?"#f85149":"#3fb950"};
-            border:1px solid ${w.neg?"rgba(248,81,73,.2)":"rgba(63,185,80,.2)"};">
+            background:${w.neg?"rgba(207,34,46,.07)":"rgba(26,127,55,.07)"};
+            color:${w.neg?"#cf222e":"#1a7f37"};
+            border:1px solid ${w.neg?"rgba(207,34,46,.18)":"rgba(26,127,55,.18)"};">
             ${w.w}<span style="font-size:10px;opacity:.7;">${w.cnt}</span>
           </span>`).join("")}
       </div>
       <div style="display:flex;gap:16px;font-size:11px;color:var(--text3);">
         <span>😡 负面 ${words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)} 条</span>
         <span>😊 正面 ${words.filter(w=>!w.neg).reduce((s,w)=>s+w.cnt,0)} 条</span>
-        <span>负面占比 <span style="color:#f85149;font-weight:600;">${(words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)/words.reduce((s,w)=>s+w.cnt,0)*100).toFixed(0)}%</span></span>
+        <span>负面占比 <span style="color:#cf222e;font-weight:600;">${(words.filter(w=>w.neg).reduce((s,w)=>s+w.cnt,0)/words.reduce((s,w)=>s+w.cnt,0)*100).toFixed(0)}%</span></span>
       </div>
     </div>`;
 
@@ -975,7 +975,7 @@ function renderSentiment(){
     {user:"买家C",    platform:"华为商店",star:2,time:"5天前",content:"视频播放卡顿非常严重，而且内存占用特别高，其他app打开后就莫名闪退。",tag:"OOM",url:"#"},
     {user:"某用户",   platform:"App Store",star:1,time:"6天前",content:"登录之后白屏，强杀重进也没用，重装才恢复，这个bug已经反馈好几次了！",tag:"崩溃",url:"#"},
   ];
-  const tagColor={"崩溃":"#f85149","ANR":"#d29922","OOM":"#bc8cff","卡顿":"#58a6ff"};
+  const tagColor={"崩溃":"#cf222e","ANR":"#9a6700","OOM":"#6639ba","卡顿":"#0969da"};
   document.getElementById("sentReviews").innerHTML=`
     <div style="padding:0;">
       ${reviews.map((r,i)=>`
